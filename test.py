@@ -12,6 +12,7 @@ class PID(object):
         self.prev_time = 0
         self.integral_error = 0
         self.max_u = 20
+        self.max_windup = 20
         # plotting
         self.time_arr = np.array([])
         self.kpe_arr = np.array([])
@@ -30,8 +31,14 @@ class PID(object):
         error = reference - measured_value
         proportional_error = error
         self.integral_error = self.integral_error + error * time_step
+        # limit integral windup/accumulation
+        if self.ki * self.integral_error > self.max_windup:
+            self.integral_error = self.max_windup/self.ki
+        elif self.ki * self.integral_error < -self.max_windup:
+            self.integral_error = -self.max_windup/self.ki
         derivative_error = (error - self.prev_error) / time_step
         u_output = self.kp * proportional_error + self.ki * self.integral_error + self.kd * derivative_error
+        # limit u output/signal to actuator
         if u_output > self.max_u:
             u_output = self.max_u
         elif u_output < 0:
@@ -65,6 +72,20 @@ class PID(object):
         plt.ylabel('u')
         plt.xlabel('time')
         plt.legend()
+        plt.show()
+    
+    def graph_errors(self):
+        plt.figure(1)
+        plt.subplot(3, 1, 1)
+        plt.plot(self.time_arr, self.kpe_arr)
+        plt.ylabel('kp errors')
+        plt.subplot(3, 1, 2)
+        plt.plot(self.time_arr, self.kie_arr)
+        plt.ylabel('ki errors')
+        plt.subplot(3, 1, 3)
+        plt.plot(self.time_arr, self.kde_arr)
+        plt.ylabel('kd errors')
+        plt.xlabel('time')
         plt.show()
         
 class Model(object):
@@ -146,4 +167,5 @@ if __name__ == '__main__':
         y = mymodel.excite(t, u)
     # plotting
     mypid.graph()
+    # mypid.graph_errors()
     # mymodel.graph()
