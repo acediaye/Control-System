@@ -125,16 +125,16 @@ if __name__ == '__main__':
     # KD = 0
     KU = 1  # gain to get y to have stable oscillation
     TU = 25.7 - 8.8  # time oscillation of 1 period
-    # TU = 25
     KP = 0.6*KU
     KI = 1.2*KU/TU
     KD = 3/40*KU*TU
     TIME_STEP = 0.1
     # input reference array
     TIME = np.arange(0+TIME_STEP, 100+TIME_STEP, TIME_STEP)
-    REFERENCE = 100 * np.ones(len(TIME))  # constant
+    # REFERENCE = 100 * np.ones(len(TIME))  # constant 100
+    REFERENCE = 100 * np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))  # constant 100 then 0
     # REFERENCE = 100 * np.sin(TIME)  # sine wave
-    print(REFERENCE)
+    print(len(REFERENCE))
     # instantiate
     mypid = PID(KP, KI, KD)
     mymodel = Model(-9.8, 1)
