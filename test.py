@@ -11,6 +11,7 @@ class PID(object):
         self.prev_error = 0
         self.prev_time = 0
         self.integral_error = 0
+        self.max_u = 20
         # plotting
         self.time_arr = np.array([])
         self.kpe_arr = np.array([])
@@ -27,19 +28,23 @@ class PID(object):
         """
         time_step = time - self.prev_time
         error = reference - measured_value
-        proportional_error = self.kp * error
-        self.integral_error = self.ki * (self.integral_error + (error * time_step))
-        derivative_error = self.kd * ((error - self.prev_error) / time_step)
-        u_output = proportional_error + self.integral_error + self.kd * derivative_error
+        proportional_error = error
+        self.integral_error = self.integral_error + error * time_step
+        derivative_error = (error - self.prev_error) / time_step
+        u_output = self.kp * proportional_error + self.ki * self.integral_error + self.kd * derivative_error
+        if u_output > self.max_u:
+            u_output = self.max_u
+        elif u_output < 0:
+            u_output = 0
         self.prev_error = error
         self.prev_time = time
         print(f'r:{reference}, y:{measured_value}, e:{error} '
               f'u:{u_output}')
         # plotting
         self.time_arr = np.append(self.time_arr, time)
-        self.kpe_arr = np.append(self.kpe_arr, proportional_error)
-        self.kie_arr = np.append(self.kie_arr, self.integral_error)
-        self.kde_arr = np.append(self.kde_arr, derivative_error)
+        self.kpe_arr = np.append(self.kpe_arr, self.kp * proportional_error)
+        self.kie_arr = np.append(self.kie_arr, self.ki * self.integral_error)
+        self.kde_arr = np.append(self.kde_arr, self.kd * derivative_error)
         self.r_arr = np.append(self.r_arr, reference)
         self.e_arr = np.append(self.e_arr, error)
         self.u_arr = np.append(self.u_arr, u_output)
@@ -112,13 +117,24 @@ class Model(object):
 
 if __name__ == '__main__':
     # constants
-    KP = 0.6
-    KI = 0.07
-    KD = 1.275
+    # KP = 0.6
+    # KI = 0.07
+    # KD = 1.275
+    # KP = 1
+    # KI = 0
+    # KD = 0
+    KU = 1  # gain to get y to have stable oscillation
+    TU = 25.7 - 8.8  # time oscillation of 1 period
+    # TU = 25
+    KP = 0.6*KU
+    KI = 1.2*KU/TU
+    KD = 3/40*KU*TU
     TIME_STEP = 0.1
     # input reference array
     TIME = np.arange(0+TIME_STEP, 100+TIME_STEP, TIME_STEP)
-    REFERENCE = 100 * np.ones(len(TIME))
+    REFERENCE = 100 * np.ones(len(TIME))  # constant
+    # REFERENCE = 100 * np.sin(TIME)  # sine wave
+    print(REFERENCE)
     # instantiate
     mypid = PID(KP, KI, KD)
     mymodel = Model(-9.8, 1)
@@ -130,4 +146,4 @@ if __name__ == '__main__':
         y = mymodel.excite(t, u)
     # plotting
     mypid.graph()
-    mymodel.graph()
+    # mymodel.graph()
