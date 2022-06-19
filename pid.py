@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import control
+from scipy.integrate import odeint
 
 class PID(object):
     def __init__(self, KP: float, KI: float, KD: float):
@@ -12,7 +14,7 @@ class PID(object):
         self.prev_time = 0
         self.integral_error = 0
         self.max_u = 20
-        self.max_windup = 20
+        self.max_windup = 20  # integrator accumulator
         # plotting
         self.time_arr = np.array([])
         self.kpe_arr = np.array([])
@@ -30,7 +32,7 @@ class PID(object):
         time_step = time - self.prev_time
         error = reference - measured_value
         proportional_error = error
-        self.integral_error = self.integral_error + error * time_step
+        self.integral_error = (self.integral_error + error) * time_step
         # limit integral windup/accumulation
         if self.ki * self.integral_error > self.max_windup:
             self.integral_error = self.max_windup/self.ki
@@ -45,8 +47,7 @@ class PID(object):
             u_output = 0
         self.prev_error = error
         self.prev_time = time
-        print(f'r:{reference}, y:{measured_value}, e:{error} '
-              f'u:{u_output}')
+        print(f'r:{reference}, y:{measured_value}, e:{error}, u:{u_output}')
         # plotting
         self.time_arr = np.append(self.time_arr, time)
         self.kpe_arr = np.append(self.kpe_arr, self.kp * proportional_error)
@@ -74,7 +75,7 @@ class PID(object):
         plt.legend()
         plt.show()
     
-    def graph_errors(self):
+    def graph_k(self):
         plt.figure(1)
         plt.subplot(3, 1, 1)
         plt.plot(self.time_arr, self.kpe_arr)
@@ -87,85 +88,99 @@ class PID(object):
         plt.ylabel('kd errors')
         plt.xlabel('time')
         plt.show()
-        
-class Model(object):
-    def __init__(self, G: float, MASS: float):
-        self.g = G
-        self.mass = MASS
-        self.prev_time = 0
-        self.pos = 0
-        self.vel = 0
-        # self.acc = 0
-        # plotting
-        self.time_arr = np.array([])
-        self.pos_arr = np.array([])
-        self.vel_arr = np.array([])
-        self.acc_arr = np.array([])
-    
-    def excite(self, time: float, thrust: float) -> float:
-        """
-        a=F/m
-        """
-        time_step = time - self.prev_time
-        acc = self.g + thrust / self.mass
-        self.vel = self.vel + acc*time_step
-        self.pos = self.pos + self.vel*time_step
-        self.prev_time = time
-        # plotting
-        self.time_arr = np.append(self.time_arr, time)
-        self.pos_arr = np.append(self.pos_arr, self.pos)
-        self.vel_arr = np.append(self.vel_arr, self.vel)
-        self.acc_arr = np.append(self.acc_arr, acc)
-        
-        return self.pos
-    
-    def graph(self):
-        plt.figure(2)
-        plt.subplot(3, 1, 1)
-        plt.plot(self.time_arr, self.pos_arr, label='position')
-        plt.ylabel('position')
-        plt.subplot(3, 1, 2)
-        plt.plot(self.time_arr, self.vel_arr, label='velocity')
-        plt.ylabel('velocity')
-        plt.subplot(3, 1, 3)
-        plt.plot(self.time_arr, self.acc_arr, label='acceleration')
-        plt.ylabel('acceleration')
-        plt.xlabel('time')
-        plt.show()
-    
-    def get_pos(self):
-        return self.pos
 
+class MASS_SPRING_DAMPER_SYSTEM(object):
+    def __init__(self, M: float, C: float, K: float):
+        """
+        sum_F(t) = F(t) - c*x(t)_dot - k*x(t) = m*x(t)_dotdot
+        x(t)_dotdot = -k/m * x(t) -c/m * x(t)_dot + F(t)/m
+        """
+        self.m = M  # mass constant
+        self.c = C  # dampening constant
+        self.k = K  # spring constant
+    
+    def state_space(self):
+        """
+        2x1
+        x_bar = [x]
+                [x_dot]
+
+        2x1 = 2x2 * 2x1 + 2x1 + 1x1
+        x_bardot = [x_dot]
+                   [x_dotdot]
+                = [   0    1][    x] + [  0][F]
+                  [-k/m -c/m][x_dot]   [1/m]
+        
+        1x1 = 1x2 * 2x1 + 1x1 * 1x1
+        y = [1 0][    x] + [0][F]
+                 [x_dot]
+        """
+        A = np.array([[0, 1], [-self.k/self.m, -self.c/self.m]])
+        B = np.array([[0], [1/self.m]])
+        C = np.array([1, 0]).reshape((1, 2))
+        D = np.array([0]).reshape((1, 1))
+        print(f'A: {np.shape(A)}, B: {np.shape(B)}, C: {np.shape(C)}, D: {np.shape(D)}')
+        return A, B, C, D
+    
+    def ss(self, A, B, C, D):
+        result = control.ss(A, B, C, D)
+        print(result)
+        return result
+
+# http://apmonitor.com/pdc/index.php/Main/ModelSimulation
+# i = 0
+temp = np.array([])
+def model(x_bar: list, t: np.array, u, m, c, k):
+    # global i
+    F = 1
+    # print(i)
+    # i += 1
+    global temp
+    temp = np.append(temp, t)
+    
+    # m = 1
+    # c = 2
+    # k = 3
+    # print(f'xbar-> {x_bar} {np.shape(x_bar)}')
+    # print(f'u-> {u} {np.shape(u)}')
+    # print(f't-> {t} {np.shape(t)}')
+    # F, m, c, k = u
+    # print(F, m, c, k)
+    x = x_bar[0]
+    x_dot = x_bar[1]
+    x_dotdot = F/m - c/m*x_dot - k/m*x
+    return [x_dot, x_dotdot]
+    
 if __name__ == '__main__':
-    # constants
-    # KP = 0.6
-    # KI = 0.07
-    # KD = 1.275
-    # KP = 1
-    # KI = 0
-    # KD = 0
-    KU = 1  # gain to get y to have stable oscillation
-    TU = 25.7 - 8.8  # time oscillation of 1 period
-    KP = 0.6*KU
-    KI = 1.2*KU/TU
-    KD = 3/40*KU*TU
+    print('hello')
+    mymodel = MASS_SPRING_DAMPER_SYSTEM(1, 2, 3)
+    (A, B, C, D) = mymodel.state_space()    
+    
+    sys = control.ss(A, B, C, D)
+    # print(sys)
+    
     TIME_STEP = 0.1
-    # input reference array
     TIME = np.arange(0+TIME_STEP, 100+TIME_STEP, TIME_STEP)
-    # REFERENCE = 100 * np.ones(len(TIME))  # constant 100
-    REFERENCE = 100 * np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))  # constant 100 then 0
-    # REFERENCE = 100 * np.sin(TIME)  # sine wave
-    print(len(REFERENCE))
-    # instantiate
-    mypid = PID(KP, KI, KD)
-    mymodel = Model(-9.8, 1)
-    # loop
-    for i in range(len(TIME)):
-        t = TIME[i]
-        r = REFERENCE[i]
-        u = mypid.controller(t, r, mymodel.get_pos())
-        y = mymodel.excite(t, u)
-    # plotting
-    mypid.graph()
-    # mypid.graph_errors()
-    # mymodel.graph()
+    # print(len(TIME))
+    # print(TIME)
+    # REFERENCE = 1*np.ones(len(TIME))
+    REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))
+    
+    t, y = control.input_output_response(sys, TIME, REFERENCE)
+    plt.figure(1)
+    plt.subplot(2, 1, 1)
+    plt.plot(t, y)
+    
+    y = odeint(model, [0, 0], TIME, args=(REFERENCE, 1, 2, 3))
+    print(np.shape(y))
+    print(y)
+    y = y[:, 0]
+    plt.plot(t, y, 'g')
+    
+    t, y = control.step_response(sys, TIME)
+    plt.subplot(2, 1, 2)
+    plt.plot(t, y)
+    plt.show()
+    
+    print(temp)
+    print(len(temp))
