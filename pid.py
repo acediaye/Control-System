@@ -128,41 +128,34 @@ class MASS_SPRING_DAMPER_SYSTEM(object):
         return result
 
 # http://apmonitor.com/pdc/index.php/Main/ModelSimulation
-# i = 0
-temp = np.array([])
 def model(x_bar: list, t: np.array, u, m, c, k):
-    # global i
-    F = 1
-    # print(i)
-    # i += 1
-    global temp
-    temp = np.append(temp, t)
-    
-    # m = 1
-    # c = 2
-    # k = 3
-    # print(f'xbar-> {x_bar} {np.shape(x_bar)}')
-    # print(f'u-> {u} {np.shape(u)}')
-    # print(f't-> {t} {np.shape(t)}')
-    # F, m, c, k = u
-    # print(F, m, c, k)
+    F = REF(t)
+    # print(t, F)
+
     x = x_bar[0]
     x_dot = x_bar[1]
     x_dotdot = F/m - c/m*x_dot - k/m*x
     return [x_dot, x_dotdot]
+
+def REF(t):
+    if t>50:
+        return 0
+    else:
+        return 1
     
 if __name__ == '__main__':
     print('hello')
     mymodel = MASS_SPRING_DAMPER_SYSTEM(1, 2, 3)
-    (A, B, C, D) = mymodel.state_space()    
+    (A, B, C, D) = mymodel.state_space()  
     
     sys = control.ss(A, B, C, D)
-    # print(sys)
+    print(sys)
+    sys2 = control.ss2tf(sys)
+    print(sys2)
+    print(control.tf('s'))
     
     TIME_STEP = 0.1
     TIME = np.arange(0+TIME_STEP, 100+TIME_STEP, TIME_STEP)
-    # print(len(TIME))
-    # print(TIME)
     # REFERENCE = 1*np.ones(len(TIME))
     REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))
     
@@ -171,9 +164,15 @@ if __name__ == '__main__':
     plt.subplot(2, 1, 1)
     plt.plot(t, y)
     
+    # as the solver has adaptive step size control, that is, 
+    # it will use internal time steps that you have no control over, 
+    # and each time step uses several evaluations of the function. 
+    # Thus there is no connection between the solver time steps and 
+    # the data time steps.
+    # internal ode time will differ from user selected time
     y = odeint(model, [0, 0], TIME, args=(REFERENCE, 1, 2, 3))
-    print(np.shape(y))
-    print(y)
+    # print(np.shape(y))
+    # print(y)
     y = y[:, 0]
     plt.plot(t, y, 'g')
     
@@ -182,5 +181,3 @@ if __name__ == '__main__':
     plt.plot(t, y)
     plt.show()
     
-    print(temp)
-    print(len(temp))
