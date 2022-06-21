@@ -101,6 +101,14 @@ class MASS_SPRING_DAMPER_SYSTEM(object):
         self.vel = 0
         self.pos = 0
         self.prev_time = 0
+        
+        self.x1_next = 0
+        self.x2_next = 0
+        self.x1_curr = 0
+        self.x2_curr = 0
+        self.x1 = np.array([0])
+        self.x2 = np.array([0])
+        self.time = np.array([0])
     
     def state_space(self):
         """
@@ -143,6 +151,35 @@ class MASS_SPRING_DAMPER_SYSTEM(object):
     def get_pos(self):
         return self.pos
 
+    def excite2(self, time , u):
+        Ts = time - self.prev_time
+        a11 = 1
+        a12 = Ts
+        a21 = -(Ts*self.k)/self.m
+        a22 = 1 - (Ts*self.c)/self.m
+        b1 = 0
+        b2 = Ts/self.m
+        
+        self.x1_next = a11*self.x1_curr + a12*self.x2_curr + b1*u
+        self.x2_next = a21*self.x1_curr + a22*self.x2_curr + b2*u
+        
+        self.x1_curr = self.x1_next
+        self.x2_curr = self.x2_next
+        self.prev_time = time
+        
+        self.x1 = np.append(self.x1, self.x1_curr)
+        self.x2 = np.append(self.x2, self.x2_curr)
+        self.time = np.append(self.time, time)
+        
+        return self.x1_curr
+    
+    def graph(self):
+        plt.figure()
+        plt.plot(self.time, self.x1)
+        plt.plot(self.time, self.x2)
+        print(len(self.time), len(self.x1), len(self.x2))
+        plt.show()
+
 # http://apmonitor.com/pdc/index.php/Main/ModelSimulation
 def model(x_bar: list, t: np.array, m, c, k):
     F = REF(t)
@@ -161,7 +198,7 @@ def REF(t):
     
 if __name__ == '__main__':
     print('hello')
-    mymodel = MASS_SPRING_DAMPER_SYSTEM(1, 20, 10)
+    mymodel = MASS_SPRING_DAMPER_SYSTEM(10, 4, 2)
     (A, B, C, D) = mymodel.state_space()  
     
     sys = control.ss(A, B, C, D)
@@ -171,17 +208,19 @@ if __name__ == '__main__':
     # print(control.tf('s'))
     
     TIME_STEP = 0.1
-    TIME = np.arange(0+TIME_STEP, 100+TIME_STEP, TIME_STEP)
-    REFERENCE = 1*np.ones(len(TIME))
+    TIME = np.arange(0+TIME_STEP, 60+TIME_STEP, TIME_STEP)
+    REFERENCE = 10*np.ones(len(TIME))
     # REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))
     
     mypid = PID(300, 0, 0)
     for i in range(len(TIME)):
         t = TIME[i]
         r = REFERENCE[i]
-        u = mypid.controller(t, r, mymodel.get_pos())
-        y = mymodel.excite(t, u)
+        u = mypid.controller(t, r, mymodel.x1_curr)
+        # u = 5
+        y = mymodel.excite2(t, u)
     mypid.graph()
+    mymodel.graph()
     
     # print(sys2)
     Kp = 300
@@ -196,13 +235,13 @@ if __name__ == '__main__':
     print(f'H: {H}, {type(H)}')
     
     # print(len(TIME), len(REFERENCE))
-    sys = control.tf2ss(H)
-    t, y = control.forced_response(H, TIME, REFERENCE)
-    print(f'force: {np.shape(y)}')
-    # print(f'force: {np.shape(x)}')
+    # sys = control.tf2ss(H)
+    t, yout, xout = control.forced_response(H, TIME, REFERENCE, return_x=True)
+    print(f'force: {np.shape(yout)}')
+    print(f'force: {np.shape(xout)}')
     plt.figure(2)
     plt.subplot(2, 1, 1)
-    plt.plot(t, y)
+    plt.plot(t, yout)
     # plt.plot(t, x)
     
     # as the solver has adaptive step size control, that is, 
@@ -211,16 +250,18 @@ if __name__ == '__main__':
     # Thus there is no connection between the solver time steps and 
     # the data time steps.
     # internal ode time will differ from user selected time
-    y = odeint(model, [0, 0], TIME, args=(1, 10, 20))
-    print(np.shape(y))
-    print(y)
-    y1 = y[:, 0]
-    y2 = y[:, 1]
-    plt.plot(t, y1, 'g')
-    plt.plot(t, y2, 'r')
+    # y = odeint(model, [0, 0], TIME, args=(1, 10, 20))
+    # print(f'ode: {np.shape(y)}')
+    # print(y)
+    # y1 = y[:, 0]
+    # y2 = y[:, 1]
+    # plt.plot(t, y1, 'g')
+    # plt.plot(t, y2, 'r')
     
-    t, y = control.step_response(H, TIME)
-    plt.subplot(2, 1, 2)
-    plt.plot(t, y)
+    # t, y = control.step_response(H, TIME)
+    # print(f'step: {np.shape(y)}')
+    # plt.subplot(2, 1, 2)
+    # plt.plot(t, y)
     plt.show()
+    
     
