@@ -24,6 +24,8 @@ class PID(object):
         self.e_arr = np.array([])
         self.u_arr = np.array([])
         self.y_arr = np.array([])
+        
+        self.prev_u = 0
     
     def controller(self, time:float, reference: float, measured_value: float) -> float:
         """
@@ -60,6 +62,24 @@ class PID(object):
         
         return u_output
     
+    def control2(self, time, reference, measured_value):
+        Ti = 5
+        time_step = time - self.prev_time
+        error = reference - measured_value
+        u_output = self.prev_u + self.kp*(error - self.prev_error) + self.kp/Ti*time_step*error
+        
+        self.prev_error = error
+        self.prev_time = time
+        self.prev_u = u_output
+        
+        self.time_arr = np.append(self.time_arr, time)
+        self.r_arr = np.append(self.r_arr, reference)
+        self.e_arr = np.append(self.e_arr, error)
+        self.u_arr = np.append(self.u_arr, u_output)
+        self.y_arr = np.append(self.y_arr, measured_value)
+        
+        return u_output
+        
     def graph(self):
         plt.figure(1)
         plt.subplot(2, 1, 1)
@@ -198,7 +218,7 @@ def REF(t):
     
 if __name__ == '__main__':
     print('hello')
-    mymodel = MASS_SPRING_DAMPER_SYSTEM(10, 4, 2)
+    mymodel = MASS_SPRING_DAMPER_SYSTEM(1, 20, 10)
     (A, B, C, D) = mymodel.state_space()  
     
     sys = control.ss(A, B, C, D)
@@ -209,14 +229,14 @@ if __name__ == '__main__':
     
     TIME_STEP = 0.1
     TIME = np.arange(0+TIME_STEP, 60+TIME_STEP, TIME_STEP)
-    REFERENCE = 10*np.ones(len(TIME))
+    REFERENCE = 1*np.ones(len(TIME))
     # REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))
     
-    mypid = PID(300, 0, 0)
+    mypid = PID(30, 70, 0)
     for i in range(len(TIME)):
         t = TIME[i]
         r = REFERENCE[i]
-        u = mypid.controller(t, r, mymodel.x1_curr)
+        u = mypid.control2(t, r, mymodel.x1_curr)
         # u = 5
         y = mymodel.excite2(t, u)
     mypid.graph()

@@ -210,38 +210,87 @@ import control
 # ----------------------------
 
 # Parameters defining the system
-c = 4 # Damping constant
-k = 2 # Stiffness of the spring
-m = 20 # Mass
-F = 5 # Force
+# c = 4 # Damping constant
+# k = 2 # Stiffness of the spring
+# m = 20 # Mass
+# F = 5 # Force
+# # Simulation Parameters
+# tstart = 0
+# tstop = 60
+# increment = 0.1
+# t = np.arange(tstart,tstop+1,increment)
+# # System matrices
+# A = [[0, 1], [-k/m, -c/m]]
+# B = [[0], [1/m]]
+# C = [[1, 0]]
+# sys = control.ss(A, B, C, 0)
+
+# Kp = 20
+# Ki = 0
+# Kd = 0
+# s = control.tf('s')
+# CC = Kp + Ki/s + Kd*s
+# print(CC)
+# L = control.series(CC, sys)
+# print(L)
+# H = control.feedback(L, 1)
+# print(H)
+
+# # Step response for the system
+# t, y, x = control.forced_response(H, t, F, return_x=True)
+# x1 = x[0 ,:]
+# x2 = x[1 ,:]
+# plt.plot(t, x1, t, x2)
+# plt.plot(t, y, '-.')
+# plt.title('Simulation of Mass-Spring-Damper System')
+# plt.xlabel('t')
+# plt.ylabel('x(t)')
+# plt.grid()
+# plt.show()
+
+# --------------------------------------------
+# test PI 
+
+# Parameters defining the system
+c = 10 # Damping constant
+k = 20 # Stiffness of the spring
+m = 1 # Mass
+F = 1 # Force
 # Simulation Parameters
 tstart = 0
-tstop = 60
-increment = 0.1
+tstop = 4
+increment = 0.01
 t = np.arange(tstart,tstop+1,increment)
 # System matrices
 A = [[0, 1], [-k/m, -c/m]]
 B = [[0], [1/m]]
 C = [[1, 0]]
-sys = control.ss(A, B, C, 0)
+P = control.ss(A, B, C, 0)
+P = control.ss2tf(P)
+print(P)
+# Step response for the system
 
-Kp = 2  0
-Ki = 0
-Kd = 0
+Kp = 30
+Ki = 70
 s = control.tf('s')
-CC = Kp + Ki/s + Kd*s
-print(CC)
-L = control.series(CC, sys)
-print(L)
+C = Kp + Ki/s
+print(C)
+
+L = control.series(C, P)
 H = control.feedback(L, 1)
 print(H)
+print(control.tf2ss(H))
 
-# Step response for the system
 t, y, x = control.forced_response(H, t, F, return_x=True)
-x1 = x[0 ,:]
-x2 = x[1 ,:]
-plt.plot(t, x1, t, x2)
-plt.plot(t, y, '-.')
+print(np.shape(t), np.shape(y), np.shape(x))
+x1 = x[0, :]
+x2 = x[1, :]
+x3 = x[2, :]
+plt.plot(t, x1, '-.', label='x1')
+plt.plot(t, x2, '--', label='x2')
+plt.plot(t, x3, ':', label='x3')
+plt.plot(t, y, label='pos')
+plt.legend()
 plt.title('Simulation of Mass-Spring-Damper System')
 plt.xlabel('t')
 plt.ylabel('x(t)')
