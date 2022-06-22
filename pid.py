@@ -26,6 +26,7 @@ class PID(object):
         self.y_arr = np.array([])
         
         self.prev_u = 0
+        self.prevprev_error = 0
     
     def controller(self, time:float, reference: float, measured_value: float) -> float:
         """
@@ -64,10 +65,19 @@ class PID(object):
     
     def control2(self, time, reference, measured_value):
         Ti = 5
-        time_step = time - self.prev_time
+        Ts = time - self.prev_time
         error = reference - measured_value
-        u_output = self.prev_u + self.kp*(error - self.prev_error) + self.kp/Ti*time_step*error
+        # u_output = self.prev_u + self.kp*(error - self.prev_error) + self.kp/Ti*Ts*error
+        # u_output = self.kp*error \
+        #            + self.ki*Ts/2*(error+self.prev_error) + self.ki*self.prev_u \
+        #            + self.kd/Ts*(error-self.prev_error)
+        u_output = self.prev_u \
+                    + (self.kp+self.ki*Ts+self.kd/Ts)*error \
+                    + (-self.kp-2*self.kd/Ts)*self.prev_error \
+                    + self.kd/Ts*self.prevprev_error
+        print(u_output)
         
+        self.prevprev_error = self.prev_error
         self.prev_error = error
         self.prev_time = time
         self.prev_u = u_output
@@ -176,7 +186,7 @@ class MASS_SPRING_DAMPER_SYSTEM(object):
         a11 = 1
         a12 = Ts
         a21 = -(Ts*self.k)/self.m
-        a22 = 1 - (Ts*self.c)/self.m
+        a22 = 1 - (Ts*self.c/self.m)
         b1 = 0
         b2 = Ts/self.m
         
@@ -197,7 +207,7 @@ class MASS_SPRING_DAMPER_SYSTEM(object):
         plt.figure()
         plt.plot(self.time, self.x1)
         plt.plot(self.time, self.x2)
-        print(len(self.time), len(self.x1), len(self.x2))
+        print(f'model graph: {len(self.time), len(self.x1), len(self.x2)}')
         plt.show()
 
 # http://apmonitor.com/pdc/index.php/Main/ModelSimulation
@@ -227,25 +237,27 @@ if __name__ == '__main__':
     print(f'P: {sys2}')
     # print(control.tf('s'))
     
-    TIME_STEP = 0.1
-    TIME = np.arange(0+TIME_STEP, 60+TIME_STEP, TIME_STEP)
+    TIME_STEP = 0.01
+    TIME = np.arange(0+TIME_STEP, 10+TIME_STEP, TIME_STEP)
     REFERENCE = 1*np.ones(len(TIME))
     # REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))
+    # REFERENCE = 1*np.sin(10*TIME)
     
-    mypid = PID(30, 70, 0)
+    # mypid = PID(30, 70, 0)
+    mypid = PID(350, 300, 50)
     for i in range(len(TIME)):
         t = TIME[i]
         r = REFERENCE[i]
         u = mypid.control2(t, r, mymodel.x1_curr)
-        # u = 5
+        # u = 1
         y = mymodel.excite2(t, u)
     mypid.graph()
     mymodel.graph()
     
     # print(sys2)
-    Kp = 300
-    Ki = 0
-    Kd = 0
+    Kp = 350
+    Ki = 300
+    Kd = 50
     s = control.tf('s')
     C = (Kp + Ki/s + Kd*s)
     print(f'C: {C}')
@@ -282,6 +294,6 @@ if __name__ == '__main__':
     # print(f'step: {np.shape(y)}')
     # plt.subplot(2, 1, 2)
     # plt.plot(t, y)
-    plt.show()
+    # plt.show()
     
     
