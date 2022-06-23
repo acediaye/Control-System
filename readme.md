@@ -79,7 +79,74 @@ Where
 - u(t) is the control input
 
 ### Discrete Domain
-Converting from continuous time domain into discontinuous time domain.
+Converting from continuous time domain into discontinuous time domain. 
+$$u(t) = K_{p}e(t) + K_{i} \int e(t) + K_{d} \dot e(t)$$
+Can be discretized by using 
+$$\dot f(t_{k}) = \frac{df(t_{k})}{dt} = \frac{f(t_{k}) - f(t_{k-1})}{\Delta t}$$
+$$\dot u(t) = K_{k} \dot e(t) + K_{i}e(t) + K_{d} \ddot e(t)$$
+Becomes
+$$
+\frac{u(t_{k}) - u(t_{k-1})} {\Delta t} 
+= 
+K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
++
+K_{i} e(t_{k})
++
+K_{d} \frac{\dot e(t_{k}) - \dot e(t_{k-1})} {\Delta t}
+$$
+$$
+\frac{u(t_{k}) - u(t_{k-1})} {\Delta t} 
+= 
+K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
++
+K_{i}e(t_{k})
++
+K_{d}
+\frac
+{\frac{e(t_{k}) - e(t_{k-1})} {\Delta t} 
+-
+\frac{e(t_{k-1}) - e(t_{k-2})} {\Delta t}} 
+{\Delta t}
+$$
+$$
+u(t_{k}) - u(t_{k-1})
+= 
+K_{p} (e(t_{k}) - e(t_{k-1}))
++
+K_{i}\Delta t e(t_{k})
++
+\frac{K_{d}} {\Delta t}
+(e(t_{k}) - 2e(t_{k-1}) + e(t_{k-2}))
+$$
+$$
+u[k]
+= 
+u[k-1]
++
+K_{p} e[k]
+-
+K_{p} e[k-1]
++
+K_{i} \Delta t e[k]
++
+\frac{K_{d}} {\Delta t} e[k] 
+-
+\frac{K_{d}} {\Delta t} 2e[k-1]
++
+\frac{K_{d}} {\Delta t} e[k-2]
+$$
+$$
+u[k]
+= 
+u[k-1]
++
+(K_{p} + K_{i} \Delta t + \frac{K_{d}} {\Delta t})e[k]
++
+(-K_{p} -2\frac{K_{d}} {\Delta t}) e[k-1]
++
+\frac{K_{d}} {\Delta t} e[k-2]
+$$
+
 
 ### Laplace Domain
 Converting from time domain into s domain (complex freqency)
