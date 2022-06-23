@@ -1,2 +1,103 @@
+# Control System
+Reglates the behavior of systems using feedback loops. The controller compares the measured values from the plant with the reference values to calculate the new input to feed into the plant for its output to converge to the refernce values.
+
+# Plant
+A mass spring damper system example
+![image](pics/Mass_spring_damper.png)
+Free body diagram
+![image](pics/free_body_diagram.PNG)
+Resulting force equation
+$$\sum F = F(t) - c \dot x(t) - k \dot x(t) = m \ddot x(t)$$
+Where F(t) is the external force applied to the mass, c is the damping constant, k is the spring stiffness constant, m is the mass, x is the position of the mass. This systems's input is the external force and the output is the position.
+$$m \ddot x = F - x \dot x - k \dot x$$
+$$\ddot x = \frac{1}{m} (F - c \dot x - kx)$$
+This is a 2nd order differential equation. Higher order differentiate equations can be broken down into many first order differential equations. (Can use lsim or odeint to solve 2nd order diff eq instead of using state space)
+
+## State Space Representation
+The most general state space equation of a linear system. Continuous time invariant system.
+$$\dot x(t) = Ax(t) + Bu(t)$$
+$$y(t) = Cx(t) + Du(t)$$
+where
+- x is the state vector, n x 1 
+- y is the output vector, q x 1
+- u is the input/control vector, p x 1
+- A is the state/system matrix, n x n
+- B is the input matrix, n x p
+- C is the output matrix, q x n
+- D is the feedforward matrix, q x p
+
+State variables represent a behavior in the system ie coordinates, voltage/current, temperature/pressure, energy. The minimum states required are typically equal to the order of the system's defining differential equation or the denominator order of the transfer function of the system.  
+
+Here we decide the states we care about, the position and the velocity. Therefore, $x_{1} = x, x_{2} = \dot x$
+$$
+X =
+\begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix} 
+=
+\begin{bmatrix} x \\ \dot x \end{bmatrix}
+$$
+Using the model equation $\ddot x = \frac{1}{m} (F - c \dot x - kx)$ 
+$$
+\dot X =
+\begin{bmatrix} \dot x_{1} \\ \dot x_{2} \end{bmatrix}
+=
+\begin{bmatrix} \dot x \\ \ddot x \end{bmatrix}
+=
+\begin{bmatrix} x_{2} \\ \frac{1}{m} (F - cx_{2} -kx_{1}) \end{bmatrix}
+$$
+With the form $\dot x = Ax + Bu $
+$$
+\begin{bmatrix} \dot x_{1} \\ \dot x_{2} \end{bmatrix}
+=
+\begin{bmatrix} 0 & 1 \\ -k/m & -c/m \end{bmatrix}
+\begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix}
++
+\begin{bmatrix} 0 \\ 1/m \end{bmatrix}
+\begin{bmatrix} F \end{bmatrix}
+$$
+and want the position to converge to 0 using $y = Cx + Du$
+$$
+\begin{bmatrix} y \end{bmatrix}
+=
+\begin{bmatrix} 1 & 0\end{bmatrix}
+\begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix}
++
+\begin{bmatrix} 0 \end{bmatrix}
+\begin{bmatrix} F \end{bmatrix}
+$$
+
+# Controller
+The are many types of controllers for different types of systems. Controllers are broken down into linear vs nonlinear, time variant vs time invariant, continuous vs discrete, etc. Linear systems follow the superposition principle $F(x_{1} + x_{2}) = F(x_{1}) + F(x_{2})$ and $F(ax) = aF(x)$ Nonlinear system are anything outside of linear system and applies to more real world systems.
+
+## PID
+PID controller uses 3 terms, proportional, integral and derivative of the errors. The proportoinal term handles the gain for the error. The integral term handles the steady state error. The derivative term handles the dampening of the error. 
+![image](pics\PID_en.png)
+By comparing the output value of the plant with the desired value the controller can then determine the amount of input to feed into the system to get the error to converge to 0, output matches input.
+Where
+- r(t) is the desired input values
+- y(t) is the measured output values
+- e(t) is the error/difference between output and input
+- u(t) is the control input
+
+### Discrete Domain
+Converting from continuous time domain into discontinuous time domain.
+
+### Laplace Domain
+Converting from time domain into s domain (complex freqency)
+
+## Full State Feedback
+
+## Linear Quadratic Regulator
+
+# References
+[KaTex](https://katex.org/docs/supported.html) Markup used by github\
 When $a \ne 0$, there are two solutions to $(ax^2 + bx + c = 0)$ and they are 
 $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
+```bash
+x is the state vector
+```
+$$\begin{bmatrix}
+a & b \\
+c & d
+\end{bmatrix}$$
+
+$$\begin{bmatrix} \end{bmatrix}$$
