@@ -54,8 +54,7 @@ $$\begin{aligned}
 \begin{bmatrix} \dot x \\\ \ddot x \end{bmatrix}
 =\
 \begin{bmatrix} x_{2} \\\ \frac{1}{m} (F - cx_{2} -kx_{1}) \end{bmatrix}
-\end{aligned}
-$$
+\end{aligned}$$
 
 ## Continuous Domain
 With the form $\dot x = Ax + Bu$
@@ -74,10 +73,10 @@ and want the position to converge to 0 using $y = Cx + Du$
 
 $$\begin{aligned}
 \begin{bmatrix} y \end{bmatrix}
-=
+=\
 \begin{bmatrix} 1 & 0\end{bmatrix}
-\begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix}
-+
+\begin{bmatrix} x_{1} \\\ x_{2} \end{bmatrix}
++\
 \begin{bmatrix} 0 \end{bmatrix}
 \begin{bmatrix} F \end{bmatrix}
 \end{aligned}$$
@@ -90,16 +89,17 @@ $$\dot x = \frac{x[k+1] - x[k]}{\Delta t}$$
 
 Can substitute back into $\dot x_{1}$ and $\dot x_{2}$ equations
 
-$$
+$$\begin{aligned}
 \frac{x_{1}[k+1] - x_{1}[k]} {\Delta t}
-=
+=\
 x_{2}[k]
-$$
-$$
+\end{aligned}$$
+
+$$\begin{aligned}
 \frac{x_{2}[k+1] - x_{2}[k]} {\Delta t}
-=
+=\
 \frac{1}{m}(F[k] - cx_{2}[k] - kx_{1}[k])
-$$
+\end{aligned}$$
 ---
 $$
 x_1[k+1] = x_1[k] + \Delta t x_2[k]
