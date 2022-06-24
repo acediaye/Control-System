@@ -38,17 +38,17 @@ State variables represent a behavior in the system ie coordinates, voltage/curre
 
 Here we decide the states we care about, the position and the velocity. Therefore, $x_{1} = x, x_{2} = \dot x$
 
-$$X = \begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix} = \begin{bmatrix} x \\ \dot x \end{bmatrix}$$
+$$X = \begin{bmatrix} x_{1} \\\ x_{2} \end{bmatrix} = \begin{bmatrix} x \\\ \dot x \end{bmatrix}$$
 
 Using the model equation $\ddot x = \frac{1}{m} (F - c \dot x - kx)$ 
 
 $$\begin{aligned}
-\dot X
-=
-\begin{bmatrix} \dot x_{1} \\\ \dot x_{2} \end{bmatrix}
-=
-\begin{bmatrix} \dot x \\\ \ddot x \end{bmatrix}
-=
+\dot X\
+=\
+\begin{bmatrix} \dot x_{1} \\\ \dot x_{2} \end{bmatrix}\
+=\
+\begin{bmatrix} \dot x \\\ \ddot x \end{bmatrix}\
+=\
 \begin{bmatrix} x_{2} \\\ \frac{1}{m} (F - cx_{2} -kx_{1}) \end{bmatrix}\end{aligned}$$
 
 ## Continuous Domain
