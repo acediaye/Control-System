@@ -8,22 +8,22 @@ Free body diagram\
 ![image](pics/free_body_diagram.PNG)\
 Resulting force equation
 
-$$ \sum F = F(t) - c \dot x(t) - k \dot x(t) = m \ddot x(t) $$
+$$\sum F = F(t) - c \dot x(t) - k \dot x(t) = m \ddot x(t)$$
 
 Where F(t) is the external force applied to the mass, c is the damping constant, k is the spring stiffness constant, m is the mass, x is the position of the mass. This systems's input is the external force and the output is the position.
 
-$$ m \ddot x = F - x \dot x - k \dot x $$
+$$m \ddot x = F - x \dot x - k \dot x$$
 
-$$ \ddot x = \frac{1}{m} (F - c \dot x - kx) $$
+$$\ddot x = \frac{1}{m} (F - c \dot x - kx)$$
 
 This is a 2nd order differential equation. Higher order differentiate equations can be broken down into many first order differential equations. (Can use lsim or odeint to solve 2nd order diff eq instead of using state space)
 
 # State Space Representation
 The most general state space equation of a linear system. Continuous time invariant system.
 
-$$ \dot x(t) = Ax(t) + Bu(t) $$
+$$\dot x(t) = Ax(t) + Bu(t)$$
 
-$$ y(t) = Cx(t) + Du(t) $$
+$$y(t) = Cx(t) + Du(t)$$
 
 where
 - x is the state vector, n x 1 
@@ -36,13 +36,13 @@ where
 
 State variables represent a behavior in the system ie coordinates, voltage/current, temperature/pressure, energy. The minimum states required are typically equal to the order of the system's defining differential equation or the denominator order of the transfer function of the system.  
 
-Here we decide the states we care about, the position and the velocity. Therefore, $ x_{1} = x, x_{2} = \dot x $
+Here we decide the states we care about, the position and the velocity. Therefore, $x_{1} = x, x_{2} = \dot x$
 
-$$ X = \begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix} = \begin{bmatrix} x \\ \dot x \end{bmatrix} $$
+$$X = \begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix} = \begin{bmatrix} x \\ \dot x \end{bmatrix}$$
 
-Using the model equation $ \ddot x = \frac{1}{m} (F - c \dot x - kx) $ 
+Using the model equation $\ddot x = \frac{1}{m} (F - c \dot x - kx)$ 
 
-$$ \dot X = \begin{bmatrix} \dot x_{1} \\ \dot x_{2} \end{bmatrix} = \begin{bmatrix} \dot x \\ \ddot x \end{bmatrix} = \begin{bmatrix} x_{2} \\ \frac{1}{m} (F - cx_{2} -kx_{1}) \end{bmatrix} $$
+$$\dot X = \begin{bmatrix} \dot x_{1} \\ \dot x_{2} \end{bmatrix} = \begin{bmatrix} \dot x \\ \ddot x \end{bmatrix} = \begin{bmatrix} x_{2} \\ \frac{1}{m} (F - cx_{2} -kx_{1}) \end{bmatrix}$$
 
 ## Continuous Domain
 With the form $\dot x = Ax + Bu $
