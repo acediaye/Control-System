@@ -13,6 +13,7 @@ $$\sum F = F(t) - c \dot x(t) - k \dot x(t) = m \ddot x(t)$$
 Where F(t) is the external force applied to the mass, c is the damping constant, k is the spring stiffness constant, m is the mass, x is the position of the mass. This systems's input is the external force and the output is the position.
 
 $$m \ddot x = F - x \dot x - k \dot x$$
+
 $$\ddot x = \frac{1}{m} (F - c \dot x - kx)$$
 
 This is a 2nd order differential equation. Higher order differentiate equations can be broken down into many first order differential equations. (Can use lsim or odeint to solve 2nd order diff eq instead of using state space)
