@@ -102,75 +102,60 @@ $$\begin{aligned}
 \end{aligned}$$
 
 ---
-$$
-x_1[k+1] = x_1[k] + \Delta t x_2[k]
-$$
-$$
-x_2[k+1] = x_2[k] + \frac{\Delta t}{m} (F[k] - cx_2[k] - kx_1[k])
-$$
+
+$$x_1[k+1] = x_1[k] + \Delta t x_2[k]$$
+
+$$x_2[k+1] = x_2[k] + \frac{\Delta t}{m} (F[k] - cx_2[k] - kx_1[k])$$
+
 ---
-$$
-x_1[k+1] = x_1[k] + \Delta t x_2[k]
-$$
-$$
-x_2[k+1] = \frac{-\Delta tk}{m}x_1[k]
-+ x_2[k] + \frac{-\Delta tc}{m}x_2[k] + \frac{\Delta t}{m}F[k]
-$$
+
+$$x_1[k+1] = x_1[k] + \Delta t x_2[k]$$
+
+$$\begin{aligned}
+x_2[k+1]
+=\
+\frac{-\Delta tk}{m}x_1[k]+ x_2[k] 
++\
+\frac{-\Delta tc}{m}x_2[k] + \frac{\Delta t}{m}F[k]
+\end{aligned}$$
+
 ---
-$$
-x_1[k+1] = x_1[k] + \Delta t x_2[k]
-$$
-$$
-x_2[k+1] = \frac{-\Delta tk}{m}x_1[k]
-+ (1 - \frac{\Delta tc}{m})x_2[k] + \frac{\Delta t}{m}F[k]
-$$
+
+$$x_1[k+1] = x_1[k] + \Delta t x_2[k]$$
+
+$$\begin{aligned}
+x_2[k+1]
+=\
+\frac{-\Delta tk}{m}x_1[k]
++\
+(1 - \frac{\Delta tc}{m})x_2[k]
++\
+\frac{\Delta t}{m}F[k]
+\end{aligned}$$
 
 In state space representation
 
-$$
-\begin{bmatrix}
-x_1[k+1] \\
-x_2[k+1]
-\end{bmatrix}
-=
-\begin{bmatrix}
-1 & \Delta t \\
-\frac{-\Delta t k}{m} & 1 - \frac{\Delta t c}{m}
-\end{bmatrix}
-\begin{bmatrix}
-x_1[k] \\
-x_2[k]
-\end{bmatrix}
-+
-\begin{bmatrix}
-0 \\
-\frac{\Delta t}{m}
-\end{bmatrix}
-\begin{bmatrix}
-F[k]
-\end{bmatrix}
-$$
+$$\begin{aligned}
+\begin{bmatrix} x_1[k+1] \\\ x_2[k+1] \end{bmatrix}
+=\
+\begin{bmatrix} 1 & \Delta t \\\ \frac{-\Delta t k}{m} & 1 - \frac{\Delta t c}{m} \end{bmatrix}
+\begin{bmatrix} x_1[k] \\\ x_2[k] \end{bmatrix}
++\
+\begin{bmatrix} 0 \\\ \frac{\Delta t}{m} \end{bmatrix}
+\begin{bmatrix} F[k] \end{bmatrix}
+\end{aligned}$$
 
 Output converging position to 0
 
-$$
+$$\begin{aligned}
 y[k]
-=
-\begin{bmatrix}
-1 & 0
-\end{bmatrix} 
-\begin{bmatrix}
-x_1[k] \\
-x_2[k]
-\end{bmatrix}
-+
-\begin{bmatrix}
-0
-\end{bmatrix}
-\begin{bmatrix}
-F[k]
-\end{bmatrix}
-$$
+=\
+\begin{bmatrix} 1 & 0 \end{bmatrix} 
+\begin{bmatrix} x_1[k] \\\ x_2[k] \end{bmatrix}
++\
+\begin{bmatrix} 0 \end{bmatrix}
+\begin{bmatrix} F[k] \end{bmatrix}
+\end{aligned}$$
 
 # Open Loop Response
 Without a controller
@@ -189,12 +174,13 @@ Where
 - e(t) is the error/difference between output and input
 - u(t) is the control input
 
-$$ u(t) = K_{p}e(t) + K_{i} \int e(t) + K_{d} \dot e(t) $$
+$$u(t) = K_{p}e(t) + K_{i} \int e(t) + K_{d} \dot e(t)$$
 
 ## Continuous Domain
 Converting from time domain into s domain with Laplace transform to get the transfer function of a PID controller
 
 $$U(s) = K_p E(s) + K_i \frac{1}{s} E(s) + K_d s E(s)$$
+
 $$\frac{U(s)}{E(s)} = K_p + \frac{K_i}{s} + K_d s$$
 
 ## Discrete Domain
@@ -202,71 +188,71 @@ Converting from continuous time domain into discontinuous time domain.\
 Can be discretized by using
 
 $$\dot f(t_{k}) = \frac{df(t_{k})}{dt} = \frac{f(t_{k}) - f(t_{k-1})}{\Delta t}$$
+
 $$\dot u(t) = K_{k} \dot e(t) + K_{i}e(t) + K_{d} \ddot e(t)$$
 
 Becomes
 
-$$
-\frac{u(t_{k}) - u(t_{k-1})} {\Delta t} 
-= 
+$$\begin{aligned}
+\frac{u(t_{k}) - u(t_{k-1})} {\Delta t}
+=\
 K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
-+
++\
 K_{i} e(t_{k})
-+
++\
 K_{d} \frac{\dot e(t_{k}) - \dot e(t_{k-1})} {\Delta t}
-$$
-$$
-\frac{u(t_{k}) - u(t_{k-1})} {\Delta t} 
-= 
+\end{aligned}$$
+
+$$\begin{aligned}
+\frac{u(t_{k}) - u(t_{k-1})} {\Delta t}
+=\
 K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
-+
-K_{i}e(t_{k})
-+
-K_{d}
-\frac
-{\frac{e(t_{k}) - e(t_{k-1})} {\Delta t} 
--
-\frac{e(t_{k-1}) - e(t_{k-2})} {\Delta t}} 
-{\Delta t}
-$$
-$$
++\
+K_{i} e(t_{k})
++\
+K_{d} \frac{\frac{e(t_{k}) - e(t_{k-1})} {\Delta t} -\frac{e(t_{k-1}) - e(t_{k-2})} {\Delta t}}{\Delta t}
+\end{aligned}$$
+
+$$\begin{aligned}
 u(t_{k}) - u(t_{k-1})
-= 
+=\
 K_{p} (e(t_{k}) - e(t_{k-1}))
-+
++\
 K_{i}\Delta t e(t_{k})
-+
++\
 \frac{K_{d}} {\Delta t}
 (e(t_{k}) - 2e(t_{k-1}) + e(t_{k-2}))
-$$
-$$
+\end{aligned}$$
+
+$$\begin{aligned}
 u[k]
-= 
+=\
 u[k-1]
-+
++\
 K_{p} e[k]
--
+-\
 K_{p} e[k-1]
-+
++\
 K_{i} \Delta t e[k]
-+
-\frac{K_{d}} {\Delta t} e[k] 
--
++\
+\frac{K_{d}} {\Delta t} e[k]
+-\
 \frac{K_{d}} {\Delta t} 2e[k-1]
-+
++\
 \frac{K_{d}} {\Delta t} e[k-2]
-$$
-$$
+\end{aligned}$$
+
+$$\begin{aligned}
 u[k]
-= 
+=\
 u[k-1]
-+
++\
 (K_{p} + K_{i} \Delta t + \frac{K_{d}} {\Delta t})e[k]
-+
++\
 (-K_{p} -2\frac{K_{d}} {\Delta t}) e[k-1]
-+
++\
 \frac{K_{d}} {\Delta t} e[k-2]
-$$
+\end{aligned}$$
 
 # Close Loop Response
 With a controller
