@@ -5,7 +5,7 @@ Reglates the behavior of systems using feedback loops. The controller compares t
 A mass spring damper system example\
 ![image](pics/mass_spring_damper.png)\
 Free body diagram\
-![image](pics/free_body_diagram.PNG)\
+![image](pics/free_body_diagram.png)\
 Resulting force equation
 
 $$\sum F = F(t) - c \dot x(t) - k \dot x(t) = m \ddot x(t)$$
