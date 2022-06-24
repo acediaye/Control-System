@@ -100,6 +100,7 @@ $$\begin{aligned}
 =\
 \frac{1}{m}(F[k] - cx_{2}[k] - kx_{1}[k])
 \end{aligned}$$
+
 ---
 $$
 x_1[k+1] = x_1[k] + \Delta t x_2[k]
