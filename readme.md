@@ -87,7 +87,7 @@ Can use approximation
 
 $$\dot x = \frac{x[k+1] - x[k]}{\Delta t}$$
 
-Can substitute back into $\dot x_1 = x_2$ and $\dot x_2 = \frac{1}{m}(F - cx_2 -kx_1)$ equations
+Can substitute back into $\dot x_1 = x_2$  and  $\dot x_2 = \frac{1}{m}(F - cx_2 -kx_1)$  equations
 
 $$\begin{aligned}
 \frac{x_{1}[k+1] - x_{1}[k]} {\Delta t}
