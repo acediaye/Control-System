@@ -20,11 +20,8 @@ This is a 2nd order differential equation. Higher order differentiate equations 
 
 # State Space Representation
 The most general state space equation of a linear system. Continuous time invariant system.
-
 $$\dot x(t) = Ax(t) + Bu(t)$$
-
 $$y(t) = Cx(t) + Du(t)$$
-
 where
 - x is the state vector, n x 1 
 - y is the output vector, q x 1
@@ -38,10 +35,7 @@ State variables represent a behavior in the system ie coordinates, voltage/curre
 
 Here we decide the states we care about, the position and the velocity. Therefore, $x_{1} = x, x_{2} = \dot x$
 
-$$X =
-\begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix} 
-=
-\begin{bmatrix} x \\ \dot x \end{bmatrix}$$
+$$X = \begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix} = \begin{bmatrix} x \\ \dot x \end{bmatrix}$$
 
 Using the model equation $\ddot x = \frac{1}{m} (F - c \dot x - kx)$ 
 
