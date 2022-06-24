@@ -42,22 +42,23 @@ class PID(object):
         
         return u_output
         
-    def graph(self):
+    def graph(self, save: bool):
         plt.figure()
         plt.subplot(2, 1, 1)
         plt.plot(self.time_arr, self.r_arr, 'b', label='reference')
         plt.plot(self.time_arr, self.y_arr, 'g', label='measured value')
         plt.plot(self.time_arr, self.e_arr, 'r', label='error')
         plt.legend()
-        plt.ylabel('position')
+        plt.ylabel('amplitude')
         plt.title('pid discrete response')
         plt.grid()
         plt.subplot(2, 1, 2)
-        plt.plot(self.time_arr, self.u_arr, label='u')
+        plt.plot(self.time_arr, self.u_arr, label='u (control)')
         plt.legend()
-        plt.ylabel('u')
+        plt.ylabel('amplitude')
         plt.xlabel('time')
         plt.grid()
         # print(f'control graph: {len(self.time_arr)}, {len(self.r_arr)}, {len(self.y_arr)}, {len(self.e_arr)}, {len(self.u_arr)}')
-        plt.savefig('pics/pid discrete response.png')
+        if save == True:
+            plt.savefig('plots/pid_discrete_response.png')
         plt.show()

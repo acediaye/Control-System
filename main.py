@@ -10,6 +10,8 @@ switch = {'open loop': False,
           'pid': True,
           'fstb': False,
           'lqr': False}
+# save plots
+save = False
 
 if __name__ == '__main__':
     TIME_STEP = 0.002
@@ -37,18 +39,19 @@ if __name__ == '__main__':
         # print(f'yout: {np.shape(yout)}')
         plt.figure()
         plt.subplot(2, 1, 1)
-        plt.plot(t, yout, label='y')
+        plt.plot(t, yout, label='y (pos)')
         plt.legend()
-        plt.ylabel('position')
+        plt.ylabel('amplitude')
         plt.title('open loop step response')
         plt.grid()
         plt.subplot(2, 1, 2)
-        plt.plot(t, REFERENCE, label='ref')
+        plt.plot(t, REFERENCE, label='ref (force)')
         plt.legend()
-        plt.ylabel('position')
+        plt.ylabel('amplitude')
         plt.xlabel('time')
         plt.grid()
-        plt.savefig('pics/open loop step response.png')
+        if save == True:
+            plt.savefig('plots/open_loop_step_response.png')
         plt.show()
 
     if switch['pid_discrete']:
@@ -58,8 +61,8 @@ if __name__ == '__main__':
             r = REFERENCE[i]
             u = mypid.controller_discrete(t, r, mymodel.y_curr)
             y = mymodel.plant_discrete(t, u)
-        mypid.graph()
-        # mymodel.graph()
+        mypid.graph(save)
+        mymodel.graph(save)
     
     if switch['pid']:
         s = control.tf('s')
@@ -70,19 +73,20 @@ if __name__ == '__main__':
         H = control.feedback(L, 1)
         print(f'H: {H}')
         
-        t, yout = control.forced_response(H, TIME, REFERENCE)
+        t, yout, xout = control.forced_response(H, TIME, REFERENCE, return_x=True)
         # print(f'yout: {np.shape(yout)}')
         # print(f'force: {np.shape(xout)}')
         p, z = control.pzmap(H)
         print(f'poles: {p}, zeros: {z}')
         plt.figure()
-        plt.plot(t, yout, label='y')
-        # for i in range(len(xout)):
-        #     plt.plot(t, xout[i, :], label=f'x{i+1}')
+        plt.plot(t, yout, label='y (pos)')
+        for i in range(len(xout)):
+            plt.plot(t, xout[i, :], label=f'x{i+1}')
         plt.legend()
-        plt.ylabel('position')
+        plt.ylabel('amplitude')
         plt.xlabel('time')
         plt.title('pid response')
         plt.grid()
-        plt.savefig('pics/pid response.png')
+        if save == True:
+            plt.savefig('plots/pid_response.png')
         plt.show()

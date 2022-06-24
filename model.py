@@ -77,16 +77,17 @@ class MASS_SPRING_DAMPER_SYSTEM(object):
         
         return self.y_curr
     
-    def graph(self):
+    def graph(self, save: bool):
         plt.figure()
-        plt.plot(self.time_arr, self.x1_arr, label='x1')
-        plt.plot(self.time_arr, self.x2_arr, label='x2')
-        plt.plot(self.time_arr, self.y_arr, label='y')
+        plt.plot(self.time_arr, self.y_arr, label='y (pos)')
+        plt.plot(self.time_arr, self.x1_arr, '--', label='x1 (pos)')
+        plt.plot(self.time_arr, self.x2_arr, '--', label='x2 (vel)')
         plt.legend()
-        plt.ylabel('position')
+        plt.ylabel('amplitude')
         plt.xlabel('time')
-        plt.title('model response')
+        plt.title('model discrete response')
         plt.grid()
         # print(f'model graph: {len(self.time_arr)}, {len(self.x1_arr)}, {len(self.x2_arr)}, {len(self.y_arr)}')
-        plt.savefig('pics/model response.png')
+        if save == True:
+            plt.savefig('plots/model_discrete_response.png')
         plt.show()
