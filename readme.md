@@ -167,9 +167,9 @@ When a step signal is used as the input, meaning a constant force of 1N is appli
 Can see that the input stays at a constant 1, but the mass cannot reach the position of 1, only converging to 0.05m.
 Poles at -7.2j and -2.8j\
 ![image](plots/open_loop_pzmap.png)\
-Can see that the poles also shows that this model converges to 0 and will not oscillate.\
+Can see that the poles also shows that this model converges to 0 and will not oscillate.
 
-When using a larger mass of 10, the model shows oscillations .
+When using a larger mass of 10, the model shows oscillations.\
 ![image](plots/open_loop_step_response_2.png)\
 ![image](plots/open_loop_pzmap_2.png)\
 Can see that a controller is needed to regulate the system so it can reach the desired input values.
@@ -351,7 +351,7 @@ Can see the poles on the negative complex plane, which results in oscillations o
 
 ## Discrete Domain
 With a mass of 1\
-![image](plots/pid_discrete_response.png)
+![image](plots/pid_discrete_response.png)\
 Can see the output/measured value converges to the reference/desired values of 1 and see that the error signal converges to 0. The u signal/controller signal that drives the model requires a significant high value to start. In a real world application the actuator cannot have such a high value and putting a saturation limit in the code will result in a longer converging time. Can see once the position converges, the actuator stops driving the model.\
 ![image](plots/model_discrete_response.png)\
 Can see the states x1 and x2. These states are from the model itself and not from the combined transfer function of the controller and plant; so they have a physical meaning.
