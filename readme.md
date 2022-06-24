@@ -3,7 +3,7 @@ Reglates the behavior of systems using feedback loops. The controller compares t
 
 # Plant
 A mass spring damper system example\
-![image](pics/Mass_spring_damper.png)\
+![image](pics/mass_spring_damper.png)\
 Free body diagram\
 ![image](pics/free_body_diagram.PNG)\
 Resulting force equation
@@ -165,7 +165,7 @@ The are many types of controllers for different types of systems. Controllers ar
 
 # PID
 PID controller uses 3 terms, proportional, integral and derivative of the errors. The proportoinal term handles the gain for the error. The integral term handles the steady state error. The derivative term handles the dampening of the error.\
-![image](pics/PID_en.png)\
+![image](pics/PID.png)\
 By comparing the output value of the plant with the desired value the controller can then determine the amount of input to feed into the system to get the error to converge to 0, output matches input.
 
 Where
@@ -256,6 +256,40 @@ u[k-1]
 
 # Close Loop Response
 With a controller
+A general image of a feedback control loop.\
+![image](pics/feedback_loop.png)\
+
+Where
+- r is the desired values
+- y is the measured values
+- e is the error between r and y
+- u is the control input
+- C is the controller
+- P is the model/plant
+- F is the sensor
+
+Assuming that this system is linear and time invariant, the Laplace transform of this system becomes.
+
+$$Y(s) = P(s)U(s)$$
+
+$$U(s) = C(s)E(s)$$
+
+$$E(s) = R(s) - F(s)Y(s)$$
+
+$$Y(s) = P(s)C(s)(R(s)-F(s)Y(s))
+= P(s)C(s)R(s)-P(s)C(s)F(s)Y(s)$$
+
+$$Y(s)+P(s)C(s)F(s)Y(s) = P(s)C(s)R(s)$$
+
+$$Y(s)(1+P(s)C(s)F(s)) = P(s)C(s)R(s)$$
+
+$$Y(s) = \frac{P(s)C(s)R(s)}{(1+P(s)C(s)F(s))}$$
+
+$$\frac{Y(s)}{R(s)} = \frac{P(s)C(s)}{1+P(s)C(s)F(s)} = H(s)$$
+
+Usually the sensor has a gain of 1 so the transfer function becomes
+
+$$H(s) = \frac{P(s)C(s)}{1+P(s)C(s)}$$
 
 # Full State Feedback
 
