@@ -294,7 +294,10 @@ Usually the sensor has a gain of 1 so the transfer function becomes
 
 $$H(s) = \frac{P(s)C(s)}{1+P(s)C(s)}$$
 
-![image](pics/system_response_many_poles.png)
+# Poles and zeros
+From the transfer function, poles are when the denominator = 0 and zeros are when the numerator = 0.\
+![image](pics/system_response_many_poles.png)\
+Poles represent the behavior of a system and zeros represents how the input signal affects the system.
 
 # Full State Feedback
 
