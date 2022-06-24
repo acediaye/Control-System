@@ -48,11 +48,11 @@ X =\
 Using the model equation $\ddot x = \frac{1}{m} (F - c \dot x - kx)$ 
 
 $$\begin{aligned}
-\dot X =\
+\dot X =
 \begin{bmatrix} \dot x_{1} \\\ \dot x_{2} \end{bmatrix}
-=\
+=
 \begin{bmatrix} \dot x \\\ \ddot x \end{bmatrix}
-=\
+=
 \begin{bmatrix} x_{2} \\\ \frac{1}{m} (F - cx_{2} -kx_{1}) \end{bmatrix}
 \end{aligned}$$
 
