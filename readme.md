@@ -158,14 +158,15 @@ y[k]
 \end{aligned}$$
 
 # Open Loop Response
-Without a controller
+Open loop means having no feedback loop.
+
 
 # Controller
 The are many types of controllers for different types of systems. Controllers are broken down into linear vs nonlinear, time variant vs time invariant, continuous vs discrete, etc. Linear systems follow the superposition principle $F(x_{1} + x_{2}) = F(x_{1}) + F(x_{2})$ and $F(ax) = aF(x)$ Nonlinear system are anything outside of linear system and applies to more real world systems.
 
 # PID
 PID controller uses 3 terms, proportional, integral and derivative of the errors. The proportoinal term handles the gain for the error. The integral term handles the steady state error. The derivative term handles the dampening of the error.\
-![image](pics/PID.png)\
+![image](pics/PID_control_loop.png)\
 By comparing the output value of the plant with the desired value the controller can then determine the amount of input to feed into the system to get the error to converge to 0, output matches input.
 
 Where
@@ -255,9 +256,9 @@ u[k-1]
 \end{aligned}$$
 
 # Close Loop Response
-With a controller
+Close loop meaning having a feedback loop from the end to the begining so the controller can modulate its signal to the plant. There is also feedforward loop where a signal/disturbance is fed into the controller beforehand instead of waiting on the output signal to come back.\
 A general image of a feedback control loop.\
-![image](pics/feedback_loop.png)
+![image](pics/basic_feedback_loop.png)
 
 Where
 - r is the desired values
@@ -276,7 +277,6 @@ $$U(s) = C(s)E(s)$$
 
 $$E(s) = R(s) - F(s)Y(s)$$
 
----
 Combining the equations gives
 
 $$Y(s) = P(s)C(s)(R(s)-F(s)Y(s))
