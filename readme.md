@@ -294,7 +294,6 @@ Usually the sensor has a gain of 1 so the transfer function becomes
 
 $$H(s) = \frac{P(s)C(s)}{1+P(s)C(s)}$$
 
-![image](pics/system_response_with_additional_poles.png)
 ![image](pics/system_response_many_poles.png)
 
 # Full State Feedback
