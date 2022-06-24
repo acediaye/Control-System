@@ -257,7 +257,7 @@ u[k-1]
 # Close Loop Response
 With a controller
 A general image of a feedback control loop.\
-![image](pics/feedback_loop.png)\
+![image](pics/feedback_loop.png)
 
 Where
 - r is the desired values
@@ -275,6 +275,9 @@ $$Y(s) = P(s)U(s)$$
 $$U(s) = C(s)E(s)$$
 
 $$E(s) = R(s) - F(s)Y(s)$$
+
+---
+Combining the equations gives
 
 $$Y(s) = P(s)C(s)(R(s)-F(s)Y(s))
 = P(s)C(s)R(s)-P(s)C(s)F(s)Y(s)$$
