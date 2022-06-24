@@ -5,7 +5,7 @@ import pid
 import model
 
 # turn parts of main on or off
-switch = {'open loop': True, 
+switch = {'open loop': False, 
           'pid_discrete': True,
           'pid': True,
           'fstb': False,
@@ -28,9 +28,12 @@ if __name__ == '__main__':
     Kp = 350
     Ki = 300
     Kd = 50
+    # Kp, Ki, Kd = 100, 0, 0
     
     if switch['open loop']:  
         t, yout = control.step_response(P, TIME)
+        p, z = control.pzmap(P)
+        print(f'poles: {p}, zeros: {z}')
         # print(f'yout: {np.shape(yout)}')
         plt.figure()
         plt.subplot(2, 1, 1)
@@ -70,6 +73,8 @@ if __name__ == '__main__':
         t, yout = control.forced_response(H, TIME, REFERENCE)
         # print(f'yout: {np.shape(yout)}')
         # print(f'force: {np.shape(xout)}')
+        p, z = control.pzmap(H)
+        print(f'poles: {p}, zeros: {z}')
         plt.figure()
         plt.plot(t, yout, label='y')
         # for i in range(len(xout)):
