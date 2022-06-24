@@ -38,27 +38,40 @@ State variables represent a behavior in the system ie coordinates, voltage/curre
 
 Here we decide the states we care about, the position and the velocity. Therefore, $x_{1} = x, x_{2} = \dot x$
 
-$$X = \begin{bmatrix} x_{1} \\\ x_{2} \end{bmatrix} = \begin{bmatrix} x \\\ \dot x \end{bmatrix}$$
+$$\begin{aligned}
+X =\
+\begin{bmatrix} x_{1} \\\ x_{2} \end{bmatrix}
+=\
+\begin{bmatrix} x \\\ \dot x \end{bmatrix}
+\end{aligned}$$
 
 Using the model equation $\ddot x = \frac{1}{m} (F - c \dot x - kx)$ 
 
 $$\begin{aligned}
-\dot X\
+\dot X =\
+\begin{bmatrix} \dot x_{1} \\\ \dot x_{2} \end{bmatrix}
 =\
-\begin{bmatrix} \dot x_{1} \\\ \dot x_{2} \end{bmatrix}\
+\begin{bmatrix} \dot x \\\ \ddot x \end{bmatrix}
 =\
-\begin{bmatrix} \dot x \\\ \ddot x \end{bmatrix}\
-=\
-\begin{bmatrix} x_{2} \\\ \frac{1}{m} (F - cx_{2} -kx_{1}) \end{bmatrix}\end{aligned}$$
+\begin{bmatrix} x_{2} \\\ \frac{1}{m} (F - cx_{2} -kx_{1}) \end{bmatrix}
+\end{aligned}$$
 
 ## Continuous Domain
 With the form $\dot x = Ax + Bu$
 
-$$\begin{bmatrix} \dot x_{1} \\ \dot x_{2} \end{bmatrix} = \begin{bmatrix} 0 & 1 \\ -k/m & -c/m \end{bmatrix} \begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix} + \begin{bmatrix} 0 \\ 1/m \end{bmatrix} \begin{bmatrix} F \end{bmatrix}$$
+$$\begin{aligned}
+\begin{bmatrix} \dot x_{1} \\\ \dot x_{2} \end{bmatrix}
+=\
+\begin{bmatrix} 0 & 1 \\\ -k/m & -c/m \end{bmatrix}
+\begin{bmatrix} x_{1} \\\ x_{2} \end{bmatrix}
++\
+\begin{bmatrix} 0 \\\ 1/m \end{bmatrix}
+\begin{bmatrix} F \end{bmatrix}
+\end{aligned}$$
 
 and want the position to converge to 0 using $y = Cx + Du$
 
-$$
+$$\begin{aligned}
 \begin{bmatrix} y \end{bmatrix}
 =
 \begin{bmatrix} 1 & 0\end{bmatrix}
@@ -66,7 +79,7 @@ $$
 +
 \begin{bmatrix} 0 \end{bmatrix}
 \begin{bmatrix} F \end{bmatrix}
-$$
+\end{aligned}$$
 
 ## Discrete Domain
 With the form $x[k+1] = Ax[k] + Bu[k]$ and $y[k] = Cx[k] + Du[k]$\
