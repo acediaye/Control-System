@@ -27,17 +27,23 @@ class FSTB(object):
         if rank_c != np.shape(A)[0] or rank_c != np.shape(A)[1]:
             raise RuntimeError('not full rank')
         
+        # open loop response
         self.time_out, self.y_ol_out = control.forced_response(self.sys_plant, time, reference)
-        
+        # close loop response
         self.K = control.place(A, B, self.poles_desire)
         A_cl = A - B*self.K
         self.sys_cl = control.ss(A_cl, B, C, D)
         self.time_out, self.y_cl_out = control.forced_response(self.sys_cl, time, reference)
-        
+        # close loop response with ref gain
         dc = control.dcgain(self.sys_cl)
-        self.Kr = 1/dc
-        self.sys_kr = control.ss(A-B*self.K, B*self.Kr, C, D)
+        self.K_r = 1/dc
+        self.sys_kr = control.ss(A-B*self.K, B*self.K_r, C, D)
         self.time_out, self.y_kr_out = control.forced_response(self.sys_kr, time, reference)
+        
+        # e_val, e_vec = np.linalg.eig(A)
+        # print(f'eig A: {e_val}')
+        # e_val, e_vec = np.linalg.eig(A_cl)
+        # print(f'eig Acl: {e_val}')
         return self.time_out, self.y_kr_out
 
     def graph(self, save: bool):
@@ -60,6 +66,11 @@ class FSTB(object):
         if self.sys_kr is None:
             raise RuntimeError('run excite')
         plt.figure()
-        poles, zeros = control.pzmap(self.sys_kr)
+        poles, zeros = control.pzmap(self.sys_plant, plot=False)
+        print(f'open loop poles: {poles}, zeros: {zeros}')
+        poles, zeros = control.pzmap(self.sys_cl, plot=False)
+        print(f'close loop poles: {poles}, zeros: {zeros}')
+        poles, zeros = control.pzmap(self.sys_kr, plot=True)
         print(f'poles: {poles}, zeros: {zeros}')
+        print(f'gains K: {self.K}, Kr: {self.K_r}')
         plt.show()

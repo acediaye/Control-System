@@ -52,7 +52,7 @@ class Mass_Spring_Damper_System(object):
         C = np.array([1, 0]).reshape((1, 2))
         D = np.array([0]).reshape((1, 1))
         state_space = control.ss(A, B, C, D)
-        # print(f'ss: {control.ssdata(state_space)}')
+        # print(f'A: {A}, B: {B}, C: {C}, D: {D}')
         self.P = control.ss2tf(state_space)
         print(f'P: {self.P}')
         return self.P

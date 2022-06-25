@@ -362,9 +362,88 @@ Can see oscillations in the output and the error signal oscillates in union, and
 ![image](plots/model_discrete_response_2.png)\
 Can see the output converges to 1, x1 which is the position also matches the output, and x2 which is the velocity starts high and ends on 0 once the position is on target.
 
-# Full State Feedback
-
 # Controllability and Observability
+Controllability means there exists a control signal which allows the system to reach any state in a finite amount of time. Controllablity matrix is defined as
+
+$$C = \begin{bmatrix}B & AB & A^2B & ... & A^{n-1}B\end{bmatrix}$$
+
+Where n is the size of the state vector. The system is controllable if it has full row rank, rank(C) = n or linearly independent. If it is not full rank that means the matrix is missing a dimension/information/linearly dependent.
+
+Observability means all states can be derived just from knowing the system outputs (without knowing the input or system states). Observability matrix is defined as
+
+$$O = \begin{bmatrix}C \\\ CA \\\ CA^2 \\\ ... \\\ CA^{n-1}\end{bmatrix}$$
+
+Where n is the size of the state vector. The system is observable if it has full row rank, rank(O) = n.
+
+# Full State Feedback
+A feedback method to place the closed loop poles of a plant in user determined locations in the complex plane. Since the poles/eigenvalues of the system determine the response of the system, the user wants to choose where to place the poles.\
+![image](pics/full_state_feedback.png)
+
+$$\dot x(t) = Ax(t) + Bu(t)$$
+
+$$y(t) = Cx(t) + Du(t)$$
+
+C is chosen to be identity and D = 0
+
+$$y(t) = x(t)$$
+
+The control law is
+
+$$u(t) = rK_r - Kx(t)$$
+
+Substituting u into state space
+
+$$\dot x(t) = Ax(t) + B(rK_r - Kx(t))$$
+
+$$\dot x(t) = Ax(t) - BKx(t) + BK_rr$$
+
+$$\dot x(t) = (A - BK)x(t) + BK_rr$$
+
+$A-BK$ becomes the new A system matrix of the close loop system. Since the eigenvalues of the old A matrix is fixed by the model, the new A matrix means the user can move the eigenvalues to desired places by changing the K gain matrix. The eigvalues of new A can be placed anywhere if A, B are controllable.
+
+To find the eigenvalues of a system by its characteristic equation.
+
+$$det\begin{bmatrix}sI - A\end{bmatrix} = 0$$
+
+Finding the eigenvalues of the plant
+
+$$A = \begin{bmatrix} 0 & 1 \\\ -20 & -10\end{bmatrix}$$
+
+$$B = \begin{bmatrix} 0 \\\ 1\end{bmatrix}$$
+
+$$det(sI-A) = 0$$
+
+$$s^2 + 10s + 20 = 0$$
+
+$$s = -5 \pm \sqrt 5$$
+
+$$s = -2.76, -7.24$$
+
+Finding the eigenvalues of the new A where $A_{cl} = A - BK$
+
+$$det\begin{bmatrix}sI - A_{cl}\end{bmatrix} = 0$$
+
+$$s^2 + (K_2+10)s + (K_1+20) = 0$$
+
+The desired chosen poles are -5+2j and -5-2j, complex conjugates.
+
+$$(s+5-2j)(s+5+2j) = 0$$
+
+$$s^2 + 10s + 29 = 0$$
+
+Setting the previous 2 equations equal to each other
+
+$$K_1 + 20 = 29$$
+
+$$K_2 + 10 = 10$$
+
+$K_1 = 9$ and $K_2 = 0$
+
+The control law u(t) = -Kx(t) forces the closed loop poles to the desired locations, so the user can pick the response of the system.
+
+$BK_r$ becomes the new B input vector of the close loop with gain system. Where $K_r$ is the inverse of the dc gain of $A_{cl}$
+
+From the model A, B, C, D; the new system becomes $A_{cl}$, $B_{cl}$, C, D or $A-BK$, $BK_r$, C, D
 
 # Linear Quadratic Regulator
 
