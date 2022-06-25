@@ -53,7 +53,9 @@ if __name__ == '__main__':
         mypid.pzmap()
         
     if switch['fstb']:
-        p_desire = np.array([-5 + 2j, -5-2j])
+        p_desire = np.array([-5+2j, -5-2j])
+        p_desire2 = np.array([5+2j, 5-2j])
+        p_desire3 = np.array([-5+0j, -1+0j])
         myfstb = fstb.FSTB(p_desire)
         myfstb.excite(P, TIME, REFERENCE)
         myfstb.graph(save)
