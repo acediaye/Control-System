@@ -6,9 +6,9 @@ import model
 
 # turn parts of main on or off
 switch = {'open loop': False, 
-          'pid_discrete': True,
-          'pid': True,
-          'fstb': False,
+          'pid_discrete': False,
+          'pid': False,
+          'fstb': True,
           'lqr': False}
 # save plots
 save = False
@@ -90,3 +90,7 @@ if __name__ == '__main__':
         if save == True:
             plt.savefig('plots/pid_response.png')
         plt.show()
+
+    if switch['fstb']:
+        pass
+        
