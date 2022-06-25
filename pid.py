@@ -9,12 +9,20 @@ class PID(object):
         self.kp = KP
         self.ki = KI
         self.kd = KD
+        self.C = None  # controller tf
+        self.H = None  # system tf
         
+        # save response values
+        self.time_out = None
+        self.y_out = None
+        self.x_out = None
+        
+        # for discrete values
         self.prev_error = 0
         self.prev2_error = 0
         self.prev_time = 0
         self.prev_u = 0
-        
+        # save discrete values
         self.time_arr = np.array([])
         self.r_arr = np.array([])
         self.e_arr = np.array([])
@@ -23,8 +31,43 @@ class PID(object):
     
     def controller(self) -> control.TransferFunction:
         s = control.tf('s')
-        transfer_function = self.kp + self.ki/s + self.kd*s
-        return transfer_function
+        self.C = self.kp + self.ki/s + self.kd*s
+        return self.C
+    
+    def excite(self, plant: control.TransferFunction, time: np.ndarray, reference: np.ndarray) -> tuple:
+        if self.C is None:
+            raise RuntimeError('run controller')
+        print(f'C: {self.C}')
+        L = control.series(self.C, plant)
+        print(f'L: {L}')
+        self.H = control.feedback(L, 1)
+        print(f'H: {self.H}')
+        self.time_out, self.y_out, self.x_out = control.forced_response(self.H, time, reference, return_x=True)
+        return self.time_out, self.y_out, self.x_out
+
+    def graph(self, save: bool):
+        if self.time_out is None:
+            raise RuntimeError('run excite')
+        plt.figure()
+        plt.plot(self.time_out, self.y_out, label='y (pos)')
+        for i in range(len(self.x_out)):
+            plt.plot(self.time_out, self.x_out[i, :], label=f'x{i+1}')
+        plt.legend()
+        plt.ylabel('amplitude')
+        plt.xlabel('time')
+        plt.title('pid response')
+        plt.grid()
+        if save == True:
+            plt.savefig('plots/pid_response.png')
+        plt.show()
+        
+    def pzmap(self):
+        if self.H is None:
+            raise RuntimeError('run excite')
+        plt.figure()
+        poles, zeros = control.pzmap(self.H, plot=True)
+        print(f'poles: {poles}, zeros: {zeros}')
+        plt.show()
     
     def controller_discrete(self, time: float, reference: float, measured_value: float) -> float:
         T = time - self.prev_time
@@ -47,7 +90,7 @@ class PID(object):
         
         return u_output
         
-    def graph(self, save: bool):
+    def graph_discrete(self, save: bool):
         plt.figure()
         plt.subplot(2, 1, 1)
         plt.plot(self.time_arr, self.r_arr, 'b', label='reference')

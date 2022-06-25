@@ -11,20 +11,27 @@ class Mass_Spring_Damper_System(object):
         self.m = M  # mass constant
         self.c = C  # dampening constant
         self.k = K  # spring constant
+        self.P = None # plant tf
 
+        # save response values
+        self.time_out = None
+        self.y_out = None
+        self.reference = None
+        
+        # for discrete values
         self.prev_time = 0
         self.x1_curr = 0
         self.x2_curr = 0
         self.y_curr = 0
         self.x1_next = 0
         self.x2_next = 0
-        
+        # save discrete values
         self.x1_arr = np.array([])
         self.x2_arr = np.array([])
         self.y_arr = np.array([])
         self.time_arr = np.array([])
     
-    def plant(self) -> control.StateSpace:
+    def plant(self) -> control.TransferFunction:
         """
         2x1
         x_bar = [x]
@@ -45,8 +52,46 @@ class Mass_Spring_Damper_System(object):
         C = np.array([1, 0]).reshape((1, 2))
         D = np.array([0]).reshape((1, 1))
         state_space = control.ss(A, B, C, D)
-        return state_space
+        # print(f'ss: {control.ssdata(state_space)}')
+        self.P = control.ss2tf(state_space)
+        print(f'P: {self.P}')
+        return self.P
 
+    def excite(self, time: np.ndarray, reference: np.ndarray) -> tuple:
+        if self.P is None:
+            raise RuntimeError('run plant')
+        self.reference = reference
+        self.time_out, self.y_out = control.forced_response(self.P, time, reference)
+        return self.time_out, self.y_out
+    
+    def graph(self, save: bool):
+        if self.time_out is None:
+            raise RuntimeError('run excite')
+        plt.figure()
+        plt.subplot(2, 1, 1)
+        plt.plot(self.time_out, self.y_out, label='y (pos)')
+        plt.legend()
+        plt.ylabel('amplitude')
+        plt.title('open loop response')
+        plt.grid()
+        plt.subplot(2, 1, 2)
+        plt.plot(self.time_out, self.reference, label='ref (force)')
+        plt.legend()
+        plt.ylabel('amplitude')
+        plt.xlabel('time')
+        plt.grid()
+        if save == True:
+            plt.savefig('plots/open_loop_response.png')
+        plt.show()
+    
+    def pzmap(self):
+        if self.P is None:
+            raise RuntimeError('run plant')
+        plt.figure()
+        poles, zeros = control.pzmap(self.P, plot=True)
+        print(f'poles: {poles}, zeros: {zeros}')
+        plt.show()
+        
     def plant_discrete(self, time: float, u: float) -> float:
         """
         only takes in 2x2 A matrix
@@ -77,7 +122,7 @@ class Mass_Spring_Damper_System(object):
         
         return self.y_curr
     
-    def graph(self, save: bool):
+    def graph_discrete(self, save: bool):
         plt.figure()
         plt.plot(self.time_arr, self.y_arr, label='y (pos)')
         plt.plot(self.time_arr, self.x1_arr, '--', label='x1 (pos)')
@@ -87,7 +132,6 @@ class Mass_Spring_Damper_System(object):
         plt.xlabel('time')
         plt.title('model discrete response')
         plt.grid()
-        # print(f'model graph: {len(self.time_arr)}, {len(self.x1_arr)}, {len(self.x2_arr)}, {len(self.y_arr)}')
         if save == True:
             plt.savefig('plots/model_discrete_response.png')
         plt.show()

@@ -1,13 +1,14 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import control
+# import matplotlib.pyplot as plt
+# import control
 import pid
 import model
+import fstb
 
 # turn parts of main on or off
 switch = {'open loop': False, 
           'pid_discrete': False,
-          'pid': True,
+          'pid': False,
           'fstb': True,
           'lqr': False}
 # save plots
@@ -22,10 +23,7 @@ if __name__ == '__main__':
     # REFERENCE = 1*np.sin(10*TIME)
     
     mymodel = model.Mass_Spring_Damper_System(1, 20, 10)
-    ss = mymodel.plant()
-    # print(f'ss: {ss}')
-    P = control.ss2tf(ss)
-    print(f'P: {P}')
+    P = mymodel.plant()
     
     Kp = 350
     Ki = 300
@@ -33,26 +31,9 @@ if __name__ == '__main__':
     # Kp, Ki, Kd = 100, 0, 0
     
     if switch['open loop']:  
-        t, yout = control.step_response(P, TIME)
-        p, z = control.pzmap(P)
-        print(f'poles: {p}, zeros: {z}')
-        # print(f'yout: {np.shape(yout)}')
-        plt.figure()
-        plt.subplot(2, 1, 1)
-        plt.plot(t, yout, label='y (pos)')
-        plt.legend()
-        plt.ylabel('amplitude')
-        plt.title('open loop step response')
-        plt.grid()
-        plt.subplot(2, 1, 2)
-        plt.plot(t, REFERENCE, label='ref (force)')
-        plt.legend()
-        plt.ylabel('amplitude')
-        plt.xlabel('time')
-        plt.grid()
-        if save == True:
-            plt.savefig('plots/open_loop_step_response.png')
-        plt.show()
+        t, y = mymodel.excite(TIME, REFERENCE)
+        mymodel.graph(save)
+        mymodel.pzmap()
 
     if switch['pid_discrete']:
         mypid = pid.PID(Kp, Ki, Kd)
@@ -61,36 +42,17 @@ if __name__ == '__main__':
             r = REFERENCE[i]
             u = mypid.controller_discrete(t, r, mymodel.y_curr)
             y = mymodel.plant_discrete(t, u)
-        mypid.graph(save)
-        mymodel.graph(save)
+        mypid.graph_discrete(save)
+        mymodel.graph_discrete(save)
     
     if switch['pid']:
         mypid = pid.PID(Kp, Ki, Kd)
         C = mypid.controller()
-        print(f'C: {C}')
-        L = control.series(C, P)
-        print(f'L: {L}')
-        H = control.feedback(L, 1)
-        print(f'H: {H}')
+        tout, yout, xout = mypid.excite(P, TIME, REFERENCE)
+        mypid.graph(save)
+        mypid.pzmap()
         
-        t, yout, xout = control.forced_response(H, TIME, REFERENCE, return_x=True)
-        # print(f'yout: {np.shape(yout)}')
-        # print(f'force: {np.shape(xout)}')
-        p, z = control.pzmap(H)
-        print(f'poles: {p}, zeros: {z}')
-        plt.figure()
-        plt.plot(t, yout, label='y (pos)')
-        for i in range(len(xout)):
-            plt.plot(t, xout[i, :], label=f'x{i+1}')
-        plt.legend()
-        plt.ylabel('amplitude')
-        plt.xlabel('time')
-        plt.title('pid response')
-        plt.grid()
-        if save == True:
-            plt.savefig('plots/pid_response.png')
-        plt.show()
-
     if switch['fstb']:
-        pass
-        
+        p_desire = np.array([-5 + 2j, -5-2j])
+        myfstb = fstb.FSTB(p_desire)
+        myfstb.excite(P, TIME, REFERENCE)
