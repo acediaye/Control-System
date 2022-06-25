@@ -387,7 +387,7 @@ C is chosen to be identity and D = 0
 
 $$y(t) = x(t)$$
 
-The control law is
+The control law is ($K_r$ is N in the picture above)
 
 $$u(t) = rK_r - Kx(t)$$
 
