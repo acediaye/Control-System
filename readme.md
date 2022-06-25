@@ -441,7 +441,7 @@ $K_1 = 9$ and $K_2 = 0$
 
 The control law u(t) = -Kx(t) forces the closed loop poles to the desired locations, so the user can pick the response of the system.
 
-$BK_r$ becomes the new B input vector of the close loop with gain system. Where $K_r$ is the inverse of the dc gain of $A_{cl}$
+$BK_r$ becomes the new B input vector of the close loop with gain system. Where $K_r$ is the inverse of the dc gain of $A_{cl}$ The DC gain of $A_{cl}$ is 0.0345 so $K_r$ is 29
 
 From the model A, B, C, D; the new system becomes $A_{cl}$, $B_{cl}$, C, D or $A-BK$, $BK_r$, C, D
 
@@ -464,6 +464,7 @@ Can see that the response diverges away from 0, meaning that the system is unsta
 Can see that since the poles are on the left side of the complex plane, the output is unstable.
 
 # Linear Quadratic Regulator
+
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github
