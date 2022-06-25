@@ -56,3 +56,6 @@ if __name__ == '__main__':
         p_desire = np.array([-5 + 2j, -5-2j])
         myfstb = fstb.FSTB(p_desire)
         myfstb.excite(P, TIME, REFERENCE)
+        myfstb.graph(save)
+        myfstb.pzmap()
+        
