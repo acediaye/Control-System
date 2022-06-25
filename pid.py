@@ -21,6 +21,11 @@ class PID(object):
         self.u_arr = np.array([])
         self.y_arr = np.array([])
     
+    def controller(self) -> control.TransferFunction:
+        s = control.tf('s')
+        transfer_function = self.kp + self.ki/s + self.kd*s
+        return transfer_function
+    
     def controller_discrete(self, time: float, reference: float, measured_value: float) -> float:
         T = time - self.prev_time
         error = reference - measured_value

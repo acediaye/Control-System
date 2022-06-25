@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import control
 
-class MASS_SPRING_DAMPER_SYSTEM(object):
+class Mass_Spring_Damper_System(object):
     def __init__(self, M: float, K: float, C: float):
         """
         sum_F(t) = F(t) - c*x(t)_dot - k*x(t) = m*x(t)_dotdot
@@ -24,7 +24,7 @@ class MASS_SPRING_DAMPER_SYSTEM(object):
         self.y_arr = np.array([])
         self.time_arr = np.array([])
     
-    def plant(self):
+    def plant(self) -> control.StateSpace:
         """
         2x1
         x_bar = [x]

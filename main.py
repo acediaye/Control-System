@@ -7,7 +7,7 @@ import model
 # turn parts of main on or off
 switch = {'open loop': False, 
           'pid_discrete': False,
-          'pid': False,
+          'pid': True,
           'fstb': True,
           'lqr': False}
 # save plots
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))
     # REFERENCE = 1*np.sin(10*TIME)
     
-    mymodel = model.MASS_SPRING_DAMPER_SYSTEM(1, 20, 10)
+    mymodel = model.Mass_Spring_Damper_System(1, 20, 10)
     ss = mymodel.plant()
     # print(f'ss: {ss}')
     P = control.ss2tf(ss)
@@ -65,8 +65,8 @@ if __name__ == '__main__':
         mymodel.graph(save)
     
     if switch['pid']:
-        s = control.tf('s')
-        C = (Kp + Ki/s + Kd*s)
+        mypid = pid.PID(Kp, Ki, Kd)
+        C = mypid.controller()
         print(f'C: {C}')
         L = control.series(C, P)
         print(f'L: {L}')
