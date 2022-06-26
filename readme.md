@@ -468,7 +468,7 @@ LQR is a type of optimal controller and operates the system at a minimum cost. I
 
 The cost function
 
-$$min(J) = \int_{0}^{\inf} x^T(t)Qx(t) + u(t)^TRu(t)dt$$
+$$J = \int_{0}^{\inf} x^T(t)Qx(t) + u(t)^TRu(t)dt$$
 
 Where
 - x(t) is the state vector, nx1
@@ -476,7 +476,7 @@ Where
 - Q is like a performance matrix, nxn symmetric positive semidefinite matrix
 - R is like a effort matrix, mxm symmetric positive definite matrix
 
-Q and R values are weights that penalize the respective states. If Q has larger values than R then the system will have a fast response of x -> 0 with a large u. If R has larger values than Q then the system will have a slow response of x -> 0 with a small u. 
+Q and R values are weights that penalize the use of the respective states/inputs. Values in Q and R need to be positive. With high values it tells the system not to use that state a lot (slow resposne) or with low values it tells the system to freely use that state (fast resposne).
 
 1. State space equations of the model gives A and B
 
@@ -506,7 +506,7 @@ $$A^TS + SA - SBR^{-1}B^TS + Q = 0$$
 - S is the ARE solution
 - E is the eigenvalues of $A-BK$
 
-Can adjust the behavior of the system by changing the weights for each individual states or inputs instead of arbitrary placing the location of the poles.
+Can adjust the behavior of the system by changing the weights for each individual states or inputs instead of arbitrary placing the location of the poles. There exists an optimal control law that minimizes the cost function J.
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github

@@ -28,14 +28,19 @@ class LQR(object):
         # close loop response
         K, S, E = control.lqr(A, B, self.Q, self.R)
         print(f'K: {K}, S: {S}, E: {E}')
-        A_cl = A - B*K
+        A_cl = A - B@K
         self.ss_cl = control.ss(A_cl, B, C, D)
         self.time_out, self.y_cl_out = control.forced_response(self.ss_cl, time, reference)
         # close loop response with gain
         dc = control.dcgain(self.ss_cl)
-        K_r = 1/dc
-        self.ss_kr = control.ss(A-B*K, B*K_r, C, D)
+        K_r = np.array([1/dc]).reshape(1, 1)
+        self.ss_kr = control.ss(A-B@K, B@K_r, C, D)
         self.time_out, self.y_kr_out, self.x_kr_out = control.forced_response(self.ss_kr, time, reference, return_x=True)
+        
+        print(np.shape(reference), np.shape(K_r), np.shape(K), type(K), np.shape(self.x_kr_out), type(self.x_kr_out))
+        self.u_kr_out = - K@self.x_kr_out #+ K_r*reference
+        # print(self.u_kr_out)
+        # print(-np.linalg.inv(C@np.linalg.inv(A-B@K)@B))  # same as dc gain. -inv(C*inv(A-BK)B)
         return self.time_out, self.y_kr_out, self.x_kr_out
         
     def graph(self, save: bool):
@@ -47,6 +52,7 @@ class LQR(object):
         plt.plot(self.time_out, self.y_kr_out, '-', label='y (kr)')
         for i in range(len(self.x_kr_out)):
             plt.plot(self.time_out, self.x_kr_out[i, :], ':', label=f'x{i+1}')
+        plt.plot(self.time_out, np.squeeze(self.u_kr_out), 'r', label='u')  # shape (1000,) and (1,1000)
         plt.legend()
         plt.ylabel('amplitude')
         plt.xlabel('time')
