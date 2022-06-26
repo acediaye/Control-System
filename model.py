@@ -11,7 +11,7 @@ class Mass_Spring_Damper_System(object):
         self.m = M  # mass constant
         self.c = C  # dampening constant
         self.k = K  # spring constant
-        self.P = None # plant tf
+        self.ss_plant = None  #plant state space 
 
         # save response values
         self.time_out = None
@@ -31,7 +31,7 @@ class Mass_Spring_Damper_System(object):
         self.y_arr = np.array([])
         self.time_arr = np.array([])
     
-    def plant(self) -> control.TransferFunction:
+    def plant(self) -> control.StateSpace:
         """
         2x1
         x_bar = [x]
@@ -51,17 +51,15 @@ class Mass_Spring_Damper_System(object):
         B = np.array([[0], [1/self.m]])
         C = np.array([1, 0]).reshape((1, 2))
         D = np.array([0]).reshape((1, 1))
-        state_space = control.ss(A, B, C, D)
-        # print(f'A: {A}, B: {B}, C: {C}, D: {D}')
-        self.P = control.ss2tf(state_space)
-        print(f'P: {self.P}')
-        return self.P
+        self.ss_plant = control.ss(A, B, C, D)
+        print(f'state space:\n{self.ss_plant}')
+        return self.ss_plant
 
     def excite(self, time: np.ndarray, reference: np.ndarray) -> tuple:
-        if self.P is None:
+        if self.ss_plant is None:
             raise RuntimeError('run plant')
         self.reference = reference
-        self.time_out, self.y_out = control.forced_response(self.P, time, reference)
+        self.time_out, self.y_out = control.forced_response(self.ss_plant, time, reference)
         return self.time_out, self.y_out
     
     def graph(self, save: bool):
@@ -85,10 +83,10 @@ class Mass_Spring_Damper_System(object):
         plt.show()
     
     def pzmap(self):
-        if self.P is None:
+        if self.ss_plant is None:
             raise RuntimeError('run plant')
         plt.figure()
-        poles, zeros = control.pzmap(self.P, plot=True)
+        poles, zeros = control.pzmap(self.ss_plant, plot=True)
         print(f'poles: {poles}, zeros: {zeros}')
         plt.show()
         

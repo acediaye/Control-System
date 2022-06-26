@@ -27,12 +27,16 @@ class LQR(object):
     def __init__(self, Q: np.ndarray, R: np.ndarray):
         self.Q = Q
         self.R = R
-        self.sys = None
+        self.ss_plant = None
         
-    def excite(self, plant: control.TransferFunction) -> tuple:
-        pass
+    def excite(self, plant: control.StateSpace, time: np.ndarray, reference: np.ndarray) -> tuple:
+        self.ss_plant = plant
+        A, B, C, D = control.ssdata(plant)
+        
+        return None, None
+        
     
-    def graph(save: bool):
+    def graph(self, save: bool):
         pass
     
     def pzmap(self):

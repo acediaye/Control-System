@@ -34,11 +34,13 @@ class PID(object):
         self.C = self.kp + self.ki/s + self.kd*s
         return self.C
     
-    def excite(self, plant: control.TransferFunction, time: np.ndarray, reference: np.ndarray) -> tuple:
+    def excite(self, plant: control.StateSpace, time: np.ndarray, reference: np.ndarray) -> tuple:
         if self.C is None:
             raise RuntimeError('run controller')
         print(f'C: {self.C}')
-        L = control.series(self.C, plant)
+        P = control.ss2tf(plant)
+        print(f'P: {P}')
+        L = control.series(self.C, P)
         print(f'L: {L}')
         self.H = control.feedback(L, 1)
         print(f'H: {self.H}')

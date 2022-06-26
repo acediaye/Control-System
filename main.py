@@ -2,13 +2,14 @@ import numpy as np
 import pid
 import model
 import fstb
+import lqr
 
 # turn parts of main on or off
 switch = {'open loop': False, 
           'pid_discrete': False,
           'pid': False,
-          'fstb': True,
-          'lqr': False}
+          'fstb': False,
+          'lqr': True}
 # save plots
 save = False
 
@@ -21,7 +22,7 @@ if __name__ == '__main__':
     # REFERENCE = 1*np.sin(10*TIME)
     
     mymodel = model.Mass_Spring_Damper_System(1, 20, 10)  # 1 or 10 mass
-    P = mymodel.plant()
+    ss_plant = mymodel.plant()
     
     Kp = 350
     Ki = 300
@@ -29,7 +30,7 @@ if __name__ == '__main__':
     # Kp, Ki, Kd = 100, 0, 0
     
     if switch['open loop']:  
-        t, y = mymodel.excite(TIME, REFERENCE)
+        tout, yout = mymodel.excite(TIME, REFERENCE)
         mymodel.graph(save)
         mymodel.pzmap()
 
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     if switch['pid']:
         mypid = pid.PID(Kp, Ki, Kd)
         C = mypid.controller()
-        tout, yout, xout = mypid.excite(P, TIME, REFERENCE)
+        tout, yout, xout = mypid.excite(ss_plant, TIME, REFERENCE)
         mypid.graph(save)
         mypid.pzmap()
         
@@ -55,7 +56,14 @@ if __name__ == '__main__':
         p_desire2 = np.array([5+2j, 5-2j])  # unstable
         p_desire3 = np.array([-2+5j, -2-5j])  # oscillation
         myfstb = fstb.FSTB(p_desire)
-        myfstb.excite(P, TIME, REFERENCE)
+        tout, yout, xout = myfstb.excite(ss_plant, TIME, REFERENCE)
         myfstb.graph(save)
         myfstb.pzmap()
         
+    if switch['lqr']:
+        Q = np.array([[1, 0], [0, 1]])  # 2x2
+        R = np.array([1])  # 1x1
+        mylqr = lqr.LQR(Q, R)
+        tout, yout = mylqr.excite(ss_plant, TIME, REFERENCE)
+        mylqr.graph(save)
+        mylqr.pzmap()
