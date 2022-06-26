@@ -56,7 +56,7 @@ class PID(object):
         plt.plot(self.time_out, self.reference, label='ref (pos)')
         plt.plot(self.time_out, self.y_out, label='y (pos)')
         for i in range(len(self.x_out)):
-            plt.plot(self.time_out, self.x_out[i, :], label=f'x{i+1}')
+            plt.plot(self.time_out, self.x_out[i, :], '--', label=f'x{i+1}')
         plt.legend()
         plt.ylabel('amplitude')
         plt.xlabel('time')
