@@ -478,9 +478,35 @@ Where
 
 Q and R values are weights that penalize the respective states. If Q has larger values than R then the system will have a fast response of x -> 0 with a large u. If R has larger values than Q then the system will have a slow response of x -> 0 with a small u. 
 
-State space equations
+1. State space equations of the model gives A and B
 
 $$\dot x(t) = Ax(t) + Bu(t)$$
+
+$$y = Cx(t) + Du(t)$$
+
+2. Choose the penalizing weights for the states Q and input R
+
+Control law
+
+$$u(t) = -Kx(t) + rK_r$$
+
+3. Find the optimal gain set K. 
+
+$$K = R^{-1}B^TS$$
+
+$K_r$ is to scale the input steady state
+
+Where S is the solution to the Algebraic Ricatti Equation
+
+$$A^TS + SA - SBR^{-1}B^TS + Q = 0$$
+
+4. There might be multiple solutions to K, need to pick one that will give stable system (poles/eigenvalues)
+
+- K is the gain matrix
+- S is the ARE solution
+- E is the eigenvalues of $A-BK$
+
+Can adjust the behavior of the system by changing the weights for each individual states or inputs instead of arbitrary placing the location of the poles.
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github
