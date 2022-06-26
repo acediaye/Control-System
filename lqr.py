@@ -18,8 +18,10 @@ class LQR(object):
         self.y_kr_out = None
         self.x_kr_out = None
         self.u_kr_out = None
+        self.reference = None
         
     def excite(self, plant: control.StateSpace, time: np.ndarray, reference: np.ndarray) -> tuple:
+        self.reference = reference
         self.ss_plant = plant
         A, B, C, D = control.ssdata(plant)
         
@@ -38,7 +40,7 @@ class LQR(object):
         self.time_out, self.y_kr_out, self.x_kr_out = control.forced_response(self.ss_kr, time, reference, return_x=True)
         
         print(np.shape(reference), np.shape(K_r), np.shape(K), type(K), np.shape(self.x_kr_out), type(self.x_kr_out))
-        self.u_kr_out = - K@self.x_kr_out #+ K_r*reference
+        self.u_kr_out = - K@self.x_kr_out
         # print(self.u_kr_out)
         # print(-np.linalg.inv(C@np.linalg.inv(A-B@K)@B))  # same as dc gain. -inv(C*inv(A-BK)B)
         return self.time_out, self.y_kr_out, self.x_kr_out
@@ -47,6 +49,7 @@ class LQR(object):
         if self.time_out is None:
             raise RuntimeError('run excite')
         plt.figure()
+        plt.plot(self.time_out, self.reference, label='ref')
         plt.plot(self.time_out, self.y_ol_out, '--', label='y (ol)')
         plt.plot(self.time_out, self.y_cl_out, '--', label='y (cl)')
         plt.plot(self.time_out, self.y_kr_out, '-', label='y (kr)')

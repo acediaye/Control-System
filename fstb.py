@@ -15,8 +15,10 @@ class FSTB(object):
         self.y_cl_out = None
         self.y_kr_out = None
         self.x_kr_out = None
+        self.reference = None
         
     def excite(self, plant: control.StateSpace, time: np.ndarray, reference: np.ndarray) -> tuple:
+        self.reference = reference
         self.ss_plant = plant
         A, B, C, D = control.ssdata(plant)
         if len(self.poles_desire) != np.shape(A)[0]:  # check n
@@ -45,6 +47,7 @@ class FSTB(object):
         if self.time_out is None:
             raise RuntimeError('run excite')
         plt.figure()
+        plt.plot(self.time_out, self.reference, label='ref')
         plt.plot(self.time_out, self.y_ol_out, '--', label='y (ol)')
         plt.plot(self.time_out, self.y_cl_out, '--', label='y (cl)')
         plt.plot(self.time_out, self.y_kr_out, label='y (kr)')

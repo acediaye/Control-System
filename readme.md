@@ -508,5 +508,9 @@ $$A^TS + SA - SBR^{-1}B^TS + Q = 0$$
 
 Can adjust the behavior of the system by changing the weights for each individual states or inputs instead of arbitrary placing the location of the poles. There exists an optimal control law that minimizes the cost function J.
 
+```
+add lqr plots
+```
+
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github

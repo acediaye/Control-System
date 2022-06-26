@@ -16,6 +16,7 @@ class PID(object):
         self.time_out = None
         self.y_out = None
         self.x_out = None
+        self.reference = None
         
         # for discrete values
         self.prev_error = 0
@@ -35,6 +36,7 @@ class PID(object):
         return self.C
     
     def excite(self, plant: control.StateSpace, time: np.ndarray, reference: np.ndarray) -> tuple:
+        self.reference = reference
         if self.C is None:
             raise RuntimeError('run controller')
         print(f'C: {self.C}')
@@ -51,6 +53,7 @@ class PID(object):
         if self.time_out is None:
             raise RuntimeError('run excite')
         plt.figure()
+        plt.plot(self.time_out, self.reference, label='ref (pos)')
         plt.plot(self.time_out, self.y_out, label='y (pos)')
         for i in range(len(self.x_out)):
             plt.plot(self.time_out, self.x_out[i, :], label=f'x{i+1}')
