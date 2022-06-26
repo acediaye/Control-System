@@ -15,13 +15,13 @@ save = False
 
 if __name__ == '__main__':
     TIME_STEP = 0.003
-    TIME = np.arange(0+TIME_STEP, 3+TIME_STEP, TIME_STEP)  # used t-t_prev. cannot start at 0 or else divide by 0-0
+    TIME = np.arange(0+TIME_STEP, 10+TIME_STEP, TIME_STEP)  # used t-t_prev. cannot start at 0 or else divide by 0-0
     print(f'time: {len(TIME)}')
     REFERENCE = 1*np.ones(len(TIME))
     # REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))
     # REFERENCE = 1*np.sin(10*TIME)
     
-    mymodel = model.Mass_Spring_Damper_System(1, 20, 10)  # 1 or 10 mass
+    mymodel = model.Mass_Spring_Damper_System(10, 20, 10)  # 1 or 10 mass
     ss_plant = mymodel.plant()
     
     Kp = 350
@@ -64,6 +64,6 @@ if __name__ == '__main__':
         Q = np.array([[1, 0], [0, 1]])  # 2x2
         R = np.array([1])  # 1x1
         mylqr = lqr.LQR(Q, R)
-        tout, yout = mylqr.excite(ss_plant, TIME, REFERENCE)
+        tout, yout, xout = mylqr.excite(ss_plant, TIME, REFERENCE)
         mylqr.graph(save)
         mylqr.pzmap()
