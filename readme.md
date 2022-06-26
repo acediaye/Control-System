@@ -464,19 +464,23 @@ Can see that the response diverges away from 0, meaning that the system is unsta
 Can see that since the poles are on the left side of the complex plane, the output is unstable.
 
 # Linear Quadratic Regulator
+LQR is a type of optimal controller and operates the system at a minimum cost. It assumes that the dynamics model is perfect so the solution is optimal, unlike robust controller where the model doesn't have to be perfect.
 
+The cost function
+
+$$min(J) = \int_{0}^{\inf} x^T(t)Qx(t) + u(t)^TRu(t)dt$$
+
+Where
+- x(t) is the state vector, nx1
+- u(t) is the control vector, mx1
+- Q is like a performance matrix, nxn symmetric positive semidefinite matrix
+- R is like a effort matrix, mxm symmetric positive definite matrix
+
+Q and R values are weights that penalize the respective states. If Q has larger values than R then the system will have a fast response of x -> 0 with a large u. If R has larger values than Q then the system will have a slow response of x -> 0 with a small u. 
+
+State space equations
+
+$$\dot x(t) = Ax(t) + Bu(t)$$
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github
-
-When $a \ne 0$, there are two solutions to $(ax^2 + bx + c = 0)$ and they are 
-$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
-```bash
-x is the state vector
-```
-$$\begin{bmatrix}
-a & b \\
-c & d
-\end{bmatrix}$$
-
-$$\begin{bmatrix} \end{bmatrix}$$
