@@ -40,10 +40,6 @@ class FSTB(object):
         self.sys_kr = control.ss(A-B*self.K, B*self.K_r, C, D)
         self.time_out, self.y_kr_out = control.forced_response(self.sys_kr, time, reference)
         
-        # e_val, e_vec = np.linalg.eig(A)
-        # print(f'eig A: {e_val}')
-        # e_val, e_vec = np.linalg.eig(A_cl)
-        # print(f'eig Acl: {e_val}')
         return self.time_out, self.y_kr_out
 
     def graph(self, save: bool):
