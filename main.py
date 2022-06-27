@@ -61,7 +61,7 @@ if __name__ == '__main__':
         myfstb.pzmap()
         
     if switch['lqr']:
-        Q = np.array([[100, 0], [0, 0.1]])  # 2x2
+        Q = np.array([[1, 0], [0, 1]])  # 2x2
         R = np.array([1])  # 1x1
         mylqr = lqr.LQR(Q, R)
         tout, yout, xout = mylqr.excite(ss_plant, TIME, REFERENCE)

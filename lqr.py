@@ -40,8 +40,7 @@ class LQR(object):
         self.time_out, self.y_kr_out, self.x_kr_out = control.forced_response(self.ss_kr, time, reference, return_x=True)
         
         # print(np.shape(reference), np.shape(K_r), np.shape(K), type(K), np.shape(self.x_kr_out), type(self.x_kr_out))
-        self.u_kr_out = - K@self.x_kr_out
-        # print(self.u_kr_out)
+        self.u_kr_out = - K@self.x_kr_out + K_r*reference
         # print(-np.linalg.inv(C@np.linalg.inv(A-B@K)@B))  # same as dc gain. -inv(C*inv(A-BK)B)
         return self.time_out, self.y_kr_out, self.x_kr_out
         
@@ -49,18 +48,23 @@ class LQR(object):
         if self.time_out is None:
             raise RuntimeError('run excite')
         plt.figure()
+        plt.subplot(2, 1, 1)
         plt.plot(self.time_out, self.reference, label='ref')
         plt.plot(self.time_out, self.y_ol_out, label='y (ol)')
         plt.plot(self.time_out, self.y_cl_out, label='y (cl)')
         plt.plot(self.time_out, self.y_kr_out, label='y (kr)')
         for i in range(len(self.x_kr_out)):
             plt.plot(self.time_out, self.x_kr_out[i, :], '--', label=f'x{i+1}')
-        plt.plot(self.time_out, np.squeeze(self.u_kr_out), 'r', label='u')  # shape (1000,) and (1,1000)
+        plt.legend(loc='right')
+        plt.grid()
+        plt.ylabel('amplitude')
+        plt.title('LQR response')
+        plt.subplot(2, 1, 2)
+        plt.plot(self.time_out, np.squeeze(self.u_kr_out), label='u')  # shape (1000,) and (1,1000)
         plt.legend()
         plt.ylabel('amplitude')
         plt.xlabel('time')
         plt.grid()
-        plt.title('LQR response')
         if save == True:
             plt.savefig('plots2/lqr_response.png')
         plt.show()
