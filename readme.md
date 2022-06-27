@@ -508,9 +508,30 @@ $$A^TS + SA - SBR^{-1}B^TS + Q = 0$$
 
 Can adjust the behavior of the system by changing the weights for each individual states or inputs instead of arbitrary placing the location of the poles. There exists an optimal control law that minimizes the cost function J.
 
-```
-add lqr plots
-```
+With mass at 10\
+$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$\
+![image](plots2/lqr_response.png)\
+![image](plots2/lqr_pzmap.png)\
+K = [0.02498439 0.07470535], $K_r = 20$\
+Poles at $-0.5 \pm 1.3j$
+
+$Q = \begin{bmatrix}1000 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$\
+![image](plots2/lqr_response_q11.png)\
+![image](plots2/lqr_pzmap_q11.png)\
+K = [17.41657387 11.19744035], $K_r = 37.4$\
+Poles at $-1.06 \pm 1.6j$
+
+$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1000\end{bmatrix}$, $R = 1$\
+![image](plots2/lqr_response_q22.png)\
+![image](plots2/lqr_pzmap_q22.png)\
+K = [0.02498439 23.17378013], $K_r = 20$\
+Poles at -0.8, -2.5
+
+$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 0.001$\
+![image](plots2/lqr_response_r1.png)\
+![image](plots2/lqr_pzmap_r1.png)\
+K = [17.41657387 28.05695045], $K_r = 37.4$\
+Poles at $-1.9 \pm 0.35j$
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github

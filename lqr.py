@@ -10,6 +10,7 @@ class LQR(object):
         self.ss_cl = None
         self.ss_kr = None
         # u = r*K_r - K*x
+        # same as dc gain -inv(C*inv(A-BK)B)
         
         # save response values
         self.time_out = None
@@ -38,10 +39,8 @@ class LQR(object):
         K_r = np.array([1/dc]).reshape(1, 1)
         self.ss_kr = control.ss(A-B@K, B@K_r, C, D)
         self.time_out, self.y_kr_out, self.x_kr_out = control.forced_response(self.ss_kr, time, reference, return_x=True)
-        
-        # print(np.shape(reference), np.shape(K_r), np.shape(K), type(K), np.shape(self.x_kr_out), type(self.x_kr_out))
         self.u_kr_out = - K@self.x_kr_out + K_r*reference
-        # print(-np.linalg.inv(C@np.linalg.inv(A-B@K)@B))  # same as dc gain. -inv(C*inv(A-BK)B)
+        print(f'Kr: {K_r}')
         return self.time_out, self.y_kr_out, self.x_kr_out
         
     def graph(self, save: bool):
