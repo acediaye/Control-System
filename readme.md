@@ -476,7 +476,7 @@ Where
 - Q is like a performance matrix, nxn symmetric positive semidefinite matrix
 - R is like a effort matrix, mxm symmetric positive definite matrix
 
-Q and R values are weights that penalize the use of the respective states/inputs. Values in Q and R need to be positive. With high values it tells the system not to use that state a lot (slow resposne) or with low values it tells the system to freely use that state (fast resposne).
+Q and R values are weights that penalize the use of the respective states/inputs. Values in Q and R need to be positive. With high values it tells the system to use the least possible change in the state (slow response) or with low values it tells the system to freely use that state (fast response).
 
 1. State space equations of the model gives A and B
 
@@ -511,24 +511,28 @@ Can adjust the behavior of the system by changing the weights for each individua
 With mass at 10\
 $Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$\
 ![image](plots2/lqr_response.png)\
+Red and purple signal is position, brown is velocity. Can see position converges to 1. Control signal u fluctuates around 20.\
 ![image](plots2/lqr_pzmap.png)\
 K = [0.02498439 0.07470535], $K_r = 20$\
 Poles at $-0.5 \pm 1.3j$
 
 $Q = \begin{bmatrix}1000 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$\
 ![image](plots2/lqr_response_q11.png)\
+Having high weight on $Q_{11}$ tells the system to not have a lot of changes to position.\
 ![image](plots2/lqr_pzmap_q11.png)\
 K = [17.41657387 11.19744035], $K_r = 37.4$\
 Poles at $-1.06 \pm 1.6j$
 
 $Q = \begin{bmatrix}1 & 0 \\\ 0 & 1000\end{bmatrix}$, $R = 1$\
 ![image](plots2/lqr_response_q22.png)\
+Having high weight on $Q_{22}$ tells the system to not have a lot of changes in velocity.\
 ![image](plots2/lqr_pzmap_q22.png)\
 K = [0.02498439 23.17378013], $K_r = 20$\
 Poles at -0.8, -2.5
 
 $Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 0.001$\
 ![image](plots2/lqr_response_r1.png)\
+Having low weight on $R_{1}$ tells the system it is allowed to have high values to actuator signal u.\
 ![image](plots2/lqr_pzmap_r1.png)\
 K = [17.41657387 28.05695045], $K_r = 37.4$\
 Poles at $-1.9 \pm 0.35j$
