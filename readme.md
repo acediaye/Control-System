@@ -1,5 +1,5 @@
 # Control System
-Reglates the behavior of systems using feedback loops. The controller compares the measured values from the plant with the reference values to calculate the new input to feed into the plant for its output to converge to the refernce values.
+Regulates the behavior of systems using feedback loops. The controller compares the measured values from the plant/model with the reference/desired values to calculate the new input to feed into the plant/model for its measured values to converge to the desired values.
 
 # Plant
 A mass spring damper system example\
@@ -331,7 +331,7 @@ $$\frac{Y(s)}{U(s)} = C(sI - A)^{-1} + D = H(s)$$
 # Poles and Zeros
 From the transfer function, poles are when the denominator = 0 and zeros are when the numerator = 0.\
 ![image](pics/system_response_many_poles.png)\
-Poles represent the behavior of a system and zeros represents how the input signal affects the system. Poles and zeros are complex numbers. When poles are on the left real axis the system converges to 0, when poles are on the origin the system stays unmoving, and when the poles are on the right real axis the system diverges from 0. When poles are on the origin the system stays unmovings and when the poles goes further out on the imaginary axis the more the system oscillates.
+Poles represent the behavior of a system and zeros represents how the input signal affects the system. Poles and zeros are complex numbers. When poles are closer to the imaginary axis the system doesn't converge or diverge, when the poles are further away from the imaginary axis the more the system converge or diverge. Poles on the left hand side of the plane, the system converges where as on the right hand side the system diverges. When poles are closer to the real axis the system does not oscillates and when the poles goes further away from the real axis the more the system oscillates.
 
 # Close Loop Response
 Close loop meaning having a feedback loop from the end to the begining so the controller can modulate its signal to the plant. There is also feedforward loop where a signal/disturbance is fed into the controller beforehand instead of waiting on the output signal to come back.
@@ -354,7 +354,7 @@ With a mass of 1\
 ![image](plots/pid_discrete_response.png)\
 Can see the output/measured value converges to the reference/desired values of 1 and see that the error signal converges to 0. The u signal/controller signal that drives the model requires a significant high value to start. In a real world application the actuator cannot have such a high value and putting a saturation limit in the code will result in a longer converging time. Can see once the position converges, the actuator stops driving the model.\
 ![image](plots/model_discrete_response.png)\
-Can see the states x1 and x2. These states are from the model itself and not from the combined transfer function of the controller and plant; so they have a physical meaning.
+Can see the states x1 and x2. These states are from the model itself and not from the combined transfer function of the controller and plant; so they have a physical meaning. x1 being the position and x2 is the velocity which was picked by the user in the beginning.
 
 With a mass of 10\
 ![image](plots/pid_discrete_response_2.png)\
@@ -387,9 +387,11 @@ C is chosen to be identity and D = 0
 
 $$y(t) = x(t)$$
 
-The control law is ($K_r$ is N in the picture above)
+The control law is
 
 $$u(t) = rK_r - Kx(t)$$
+
+($K_r$ is N in the picture above)
 
 Substituting u into state space
 
@@ -463,7 +465,7 @@ Can see that the response diverges away from 0, meaning that the system is unsta
 ![image](plots2/fstb_pzmap_u.png)\
 Can see that since the poles are on the left side of the complex plane, the output is unstable.
 
-# Linear Quadratic Regulator
+# Linear Quadratic Regulator (Tracking)
 LQR is a type of optimal controller and operates the system at a minimum cost. It assumes that the dynamics model is perfect so the solution is optimal, unlike robust controller where the model doesn't have to be perfect.
 
 The cost function
@@ -476,7 +478,7 @@ Where
 - Q is like a performance matrix, nxn symmetric positive semidefinite matrix
 - R is like a effort matrix, mxm symmetric positive definite matrix
 
-Q and R values are weights that penalize the use of the respective states/inputs. Values in Q and R need to be positive. With high values it tells the system to use the least possible change in the state (slow response) or with low values it tells the system to freely use that state (fast response).
+Q and R values are weights that penalize the use of the respective states/inputs. Values has to be $Q \ge 0$ and $R > 0$. With high Q values it tells the system to use the least possible change in the state (slow response) or with low values it tells the system to freely use that state (fast response). With high R values means the controller is not allowed to use a lot of actuation signal ie force, voltage, etc. With low R values means the controller is allowed to use a lot of actuation signal. The cost function J has a unique minimum that can be obtained by solving the Algebraic Riccati Equation.
 
 1. State space equations of the model gives A and B
 
@@ -506,12 +508,12 @@ $$A^TS + SA - SBR^{-1}B^TS + Q = 0$$
 - S is the ARE solution
 - E is the eigenvalues of $A-BK$
 
-Can adjust the behavior of the system by changing the weights for each individual states or inputs instead of arbitrary placing the location of the poles. There exists an optimal control law that minimizes the cost function J.
+Can adjust the behavior of the system by changing the weights for each individual states or inputs instead of arbitrary placing the location of the poles. This is a much more intuitive way to adjust the behavior of the system.
 
 With mass at 10\
 $Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$\
 ![image](plots2/lqr_response.png)\
-Red and purple signal is position, brown is velocity. Can see position converges to 1. Control signal u fluctuates around 20.\
+y_kr and x1 signal is position, x2 is velocity. Can see position converges to 1. Control signal u fluctuates around 20.\
 ![image](plots2/lqr_pzmap.png)\
 K = [0.02498439 0.07470535], $K_r = 20$\
 Poles at $-0.5 \pm 1.3j$
@@ -525,7 +527,7 @@ Poles at $-1.06 \pm 1.6j$
 
 $Q = \begin{bmatrix}1 & 0 \\\ 0 & 1000\end{bmatrix}$, $R = 1$\
 ![image](plots2/lqr_response_q22.png)\
-Having high weight on $Q_{22}$ tells the system to not have a lot of changes in velocity.\
+Having high weight on $Q_{22}$ tells the system to not have a lot of changes in velocity. Can see velocity peaks around 0.5, half of the previous example.\
 ![image](plots2/lqr_pzmap_q22.png)\
 K = [0.02498439 23.17378013], $K_r = 20$\
 Poles at -0.8, -2.5
@@ -536,6 +538,10 @@ Having low weight on $R_{1}$ tells the system it is allowed to have high values 
 ![image](plots2/lqr_pzmap_r1.png)\
 K = [17.41657387 28.05695045], $K_r = 37.4$\
 Poles at $-1.9 \pm 0.35j$
+
+# Linear Quadratic Estimator (or Kalman Filter)
+
+# Linear Quadratic Gaussian
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github
