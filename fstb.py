@@ -37,7 +37,7 @@ class FSTB(object):
         self.time_out, self.y_cl_out = control.forced_response(self.ss_cl, time, reference)
         # close loop response with ref gain
         dc = control.dcgain(self.ss_cl)
-        K_r = np.array([1/dc]).reshape(1, 1)
+        K_r = np.array([[1/dc]])
         self.ss_kr = control.ss(A-B@K, B@K_r, C, D)
         self.time_out, self.y_kr_out, self.x_kr_out = control.forced_response(self.ss_kr, time, reference, return_x=True)
         print(f'K: {K}, Kr: {K_r}')

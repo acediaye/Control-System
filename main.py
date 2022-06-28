@@ -62,7 +62,7 @@ if __name__ == '__main__':
         
     if switch['lqr']:
         Q = np.array([[1, 0], [0, 1]])  # 2x2
-        R = np.array([1])  # 1x1
+        R = np.array([[1]])  # 1x1
         mylqr = lqr.LQR(Q, R)
         tout, yout, xout = mylqr.excite(ss_plant, TIME, REFERENCE)
         mylqr.graph(save)
