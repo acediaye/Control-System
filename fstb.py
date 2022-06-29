@@ -15,6 +15,7 @@ class FSTB(object):
         self.y_cl_out = None
         self.y_kr_out = None
         self.x_kr_out = None
+        self.u_kr_out = None
         self.reference = None
         
     def excite(self, plant: control.StateSpace, time: np.ndarray, reference: np.ndarray) -> tuple:
@@ -40,6 +41,7 @@ class FSTB(object):
         K_r = np.array([[1/dc]])
         self.ss_kr = control.ss(A-B@K, B@K_r, C, D)
         self.time_out, self.y_kr_out, self.x_kr_out = control.forced_response(self.ss_kr, time, reference, return_x=True)
+        self.u_kr_out = K_r*reference - K@self.x_kr_out
         print(f'K: {K}, Kr: {K_r}')
         return self.time_out, self.y_kr_out, self.x_kr_out
 
@@ -47,17 +49,23 @@ class FSTB(object):
         if self.time_out is None:
             raise RuntimeError('run excite')
         plt.figure()
+        plt.subplot(2, 1, 1)
         plt.plot(self.time_out, self.reference, label='ref')
         plt.plot(self.time_out, self.y_ol_out, label='y (ol)')
         plt.plot(self.time_out, self.y_cl_out, label='y (cl)')
         plt.plot(self.time_out, self.y_kr_out, label='y (kr)')
         for i in range(len(self.x_kr_out)):
             plt.plot(self.time_out, self.x_kr_out[i, :], '--', label=f'x{i+1}')
+        plt.legend(loc='right')
+        plt.ylabel('amplitude')
+        plt.grid()
+        plt.title('FSTB response')
+        plt.subplot(2, 1, 2)
+        plt.plot(self.time_out, np.squeeze(self.u_kr_out), label='u')
         plt.legend()
         plt.ylabel('amplitude')
         plt.xlabel('time')
         plt.grid()
-        plt.title('FSTB response')
         if save == True:
             plt.savefig('plots2/fstb_response.png')
         plt.show()
@@ -66,10 +74,6 @@ class FSTB(object):
         if self.ss_kr is None:
             raise RuntimeError('run excite')
         plt.figure()
-        poles, zeros = control.pzmap(self.ss_plant, plot=False)
-        # print(f'open loop poles: {poles}, zeros: {zeros}')
-        poles, zeros = control.pzmap(self.ss_cl, plot=False)
-        # print(f'close loop poles: {poles}, zeros: {zeros}')
         poles, zeros = control.pzmap(self.ss_kr, plot=True)
         print(f'poles: {poles}, zeros: {zeros}')
         plt.show()

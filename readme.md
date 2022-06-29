@@ -545,3 +545,6 @@ Poles at $-1.9 \pm 0.35j$
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github
+[Control Tutorial](https://ctms.engin.umich.edu/CTMS/index.php?aux=Home) for matlab/simulink by CMU
+[PID](https://en.wikipedia.org/wiki/PID_controller) wiki
+[LQR](https://www.youtube.com/playlist?list=PLn8PRpmsu08podBgFw66-IavqU2SqPg_w) by matlab

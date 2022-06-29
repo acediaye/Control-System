@@ -39,7 +39,7 @@ class LQR(object):
         K_r = np.array([[1/dc]])
         self.ss_kr = control.ss(A-B@K, B@K_r, C, D)
         self.time_out, self.y_kr_out, self.x_kr_out = control.forced_response(self.ss_kr, time, reference, return_x=True)
-        self.u_kr_out = - K@self.x_kr_out + K_r*reference
+        self.u_kr_out = K_r*reference - K@self.x_kr_out
         print(f'Kr: {K_r}')
         return self.time_out, self.y_kr_out, self.x_kr_out
         
