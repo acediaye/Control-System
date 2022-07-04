@@ -22,8 +22,10 @@ class FSFB(object):
         self.reference = reference
         self.ss_plant = plant
         A, B, C, D = control.ssdata(plant)
+        # check number of eigenvalues
         if len(self.poles_desire) != np.shape(A)[0]:  # check n
             raise RuntimeError('missing eigenvalues')
+        # check controllability
         ctrb = control.ctrb(A, B)
         rank_c = np.linalg.matrix_rank(ctrb)
         if rank_c != np.shape(A)[0]:

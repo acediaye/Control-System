@@ -25,6 +25,11 @@ class LQR(object):
         self.reference = reference
         self.ss_plant = plant
         A, B, C, D = control.ssdata(plant)
+        # check controllability
+        ctrb = control.ctrb(A, B)
+        rank_c = np.linalg.matrix_rank(ctrb)
+        if rank_c != np.shape(A)[0]:
+            raise RuntimeError('not full row rank')
         
         # open loop response
         self.time_out, self.y_ol_out = control.forced_response(self.ss_plant, time, reference)

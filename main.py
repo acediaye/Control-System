@@ -3,7 +3,7 @@ import model
 import pid
 import fsfb
 import lqr
-import fso
+import fsob
 
 # turn parts of main on or off
 switch = {'open loop': False, 
@@ -11,19 +11,19 @@ switch = {'open loop': False,
           'pid': False,
           'fsfb': False,
           'lqr': False,
-          'fso': True}
+          'fsob': True}
 # save plots
 save = False
 
 if __name__ == '__main__':
     TIME_STEP = 0.003
-    TIME = np.arange(0+TIME_STEP, 10+TIME_STEP, TIME_STEP)  # used t-t_prev. cannot start at 0 or else divide by 0-0
+    TIME = np.arange(0+TIME_STEP, 3+TIME_STEP, TIME_STEP)  # used t-t_prev. cannot start at 0 or else divide by 0-0
     print(f'time: {len(TIME)}')
     REFERENCE = 1*np.ones(len(TIME))
     # REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))
     # REFERENCE = 1*np.sin(10*TIME)
     
-    mymodel = model.Mass_Spring_Damper_System(10, 20, 10)  # 1 or 10 mass
+    mymodel = model.Mass_Spring_Damper_System(1, 20, 10)  # 1 or 10 mass
     ss_plant = mymodel.plant()
     
     Kp = 350
@@ -70,9 +70,11 @@ if __name__ == '__main__':
         mylqr.graph(save)
         mylqr.pzmap()
 
-    if switch['fso']:
+    if switch['fsob']:
         p_desire = np.array([-5+2j, -5-2j])  # no oscillation
-        # p_desire2 = np.array([5+2j, 5-2j])  # unstable
-        # p_desire3 = np.array([-2+5j, -2-5j])  # oscillation
-        myfso = fso.FSO(p_desire)
-        myfso.excite(ss_plant, TIME, REFERENCE)
+        p_desire2 = np.array([-0.1+2j, -0.1-2j])  # no oscillation
+        myfsob = fsob.FSOB(p_desire)
+        myfsob.excite(ss_plant, TIME, REFERENCE)
+        myfsob.graph(save)
+        myfsob.pzmap()
+        
