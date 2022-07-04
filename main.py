@@ -4,6 +4,7 @@ import pid
 import fsfb
 import lqr
 import fsob
+import lqe
 
 # turn parts of main on or off
 switch = {'open loop': False, 
@@ -11,7 +12,8 @@ switch = {'open loop': False,
           'pid': False,
           'fsfb': False,
           'lqr': False,
-          'fsob': True}
+          'fsob': False,
+          'lqe': True}
 # save plots
 save = False
 
@@ -74,7 +76,15 @@ if __name__ == '__main__':
         p_desire = np.array([-5+2j, -5-2j])  # no oscillation
         p_desire2 = np.array([-0.1+2j, -0.1-2j])  # no oscillation
         myfsob = fsob.FSOB(p_desire)
-        myfsob.excite(ss_plant, TIME, REFERENCE)
+        tout, xhat = myfsob.excite(ss_plant, TIME, REFERENCE)
         myfsob.graph(save)
         myfsob.pzmap()
+    
+    if switch['lqe']:
+        Q = np.array([[1, 0], [0, 1]])  # 2x2
+        R = np.array([[1]])  # 1x1
+        mylqe = lqe.LQE(Q, R)
+        tout, xhat = mylqe.excite(ss_plant, TIME, REFERENCE)
+        mylqe.graph(save)
+        mylqe.pzmap()
         

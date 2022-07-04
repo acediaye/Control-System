@@ -2,9 +2,10 @@ import control
 import numpy as np
 import matplotlib.pyplot as plt
 
-class FSOB(object):
-    def __init__(self, eigenvalues: np.ndarray):
-        self.poles_desire = eigenvalues
+class LQE(object):
+    def __init__(self, Q: np.ndarray, R: np.ndarray):
+        self.Q = Q  # Vd?
+        self.R = R  # Vn?
         self.ss_plant = None  # state space plant
         self.ss_obsv = None
         
@@ -19,9 +20,6 @@ class FSOB(object):
         self.reference = reference
         self.ss_plant = plant
         A, B, C, D = control.ssdata(plant)
-        # check number of eigenvalues
-        if len(self.poles_desire) != np.shape(A)[0]:  # check n
-            raise RuntimeError('missing eigenvalues')
         # check observability
         obsv = control.obsv(A, C)
         rank_o = np.linalg.matrix_rank(obsv)
@@ -31,7 +29,12 @@ class FSOB(object):
         # open loop response
         self.time_out, self.y_ol_out, self.x_ol_out = control.forced_response(self.ss_plant, time, reference, return_x=True)
         # state observer response
-        L = control.place(A.T, C.T, self.poles_desire).T
+        # L = control.place(A.T, C.T, self.poles_desire).T
+        Vd = 1*np.eye(2)  #disturbance 0.1
+        Vn = 1  # noise
+        L, S, E = control.lqr(A.T, C.T, Vd, Vn)  # duality
+        L = L.T
+        S = S.T
         A_ob = A-L@C
         B_ob = np.bmat([B, L])
         C_ob = np.eye(2)
@@ -60,9 +63,9 @@ class FSOB(object):
         plt.ylabel('amplitude')
         plt.xlabel('time')
         plt.grid()
-        plt.title('FSOB response')
+        plt.title('LQE response')
         if save == True:
-            plt.savefig('plots3/fsob_response.png')
+            plt.savefig('plots3/lqe_response.png')
         plt.show()
     
     def pzmap(self):

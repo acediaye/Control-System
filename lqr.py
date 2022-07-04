@@ -10,7 +10,7 @@ class LQR(object):
         self.ss_cl = None
         self.ss_kr = None
         # u = r*K_r - K*x
-        # same as dc gain -inv(C*inv(A-BK)B)
+        # same as 1/dc gain, -inv(C*inv(A-BK)B)
         
         # save response values
         self.time_out = None
