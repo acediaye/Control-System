@@ -1,15 +1,17 @@
 import numpy as np
-import pid
 import model
-import fstb
+import pid
+import fsfb
 import lqr
+import fso
 
 # turn parts of main on or off
 switch = {'open loop': False, 
           'pid_discrete': False,
           'pid': False,
-          'fstb': False,
-          'lqr': True}
+          'fsfb': False,
+          'lqr': False,
+          'fso': True}
 # save plots
 save = False
 
@@ -51,14 +53,14 @@ if __name__ == '__main__':
         mypid.graph(save)
         mypid.pzmap()
         
-    if switch['fstb']:
+    if switch['fsfb']:
         p_desire = np.array([-5+2j, -5-2j])  # no oscillation
         p_desire2 = np.array([5+2j, 5-2j])  # unstable
         p_desire3 = np.array([-2+5j, -2-5j])  # oscillation
-        myfstb = fstb.FSTB(p_desire)
-        tout, yout, xout = myfstb.excite(ss_plant, TIME, REFERENCE)
-        myfstb.graph(save)
-        myfstb.pzmap()
+        myfsfb = fsfb.FSFB(p_desire)
+        tout, yout, xout = myfsfb.excite(ss_plant, TIME, REFERENCE)
+        myfsfb.graph(save)
+        myfsfb.pzmap()
         
     if switch['lqr']:
         Q = np.array([[1, 0], [0, 1]])  # 2x2
@@ -67,3 +69,10 @@ if __name__ == '__main__':
         tout, yout, xout = mylqr.excite(ss_plant, TIME, REFERENCE)
         mylqr.graph(save)
         mylqr.pzmap()
+
+    if switch['fso']:
+        p_desire = np.array([-5+2j, -5-2j])  # no oscillation
+        # p_desire2 = np.array([5+2j, 5-2j])  # unstable
+        # p_desire3 = np.array([-2+5j, -2-5j])  # oscillation
+        myfso = fso.FSO(p_desire)
+        myfso.excite(ss_plant, TIME, REFERENCE)

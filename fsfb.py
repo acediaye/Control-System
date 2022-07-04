@@ -2,7 +2,7 @@ import control
 import numpy as np
 import matplotlib.pyplot as plt
 
-class FSTB(object):
+class FSFB(object):
     def __init__(self, eigenvalues: np.ndarray):
         self.poles_desire = eigenvalues
         self.ss_plant = None  # state space plant
@@ -59,7 +59,7 @@ class FSTB(object):
         plt.legend(loc='right')
         plt.ylabel('amplitude')
         plt.grid()
-        plt.title('FSTB response')
+        plt.title('FSFB response')
         plt.subplot(2, 1, 2)
         plt.plot(self.time_out, np.squeeze(self.u_kr_out), label='u')
         plt.legend()
@@ -67,7 +67,7 @@ class FSTB(object):
         plt.xlabel('time')
         plt.grid()
         if save == True:
-            plt.savefig('plots2/fstb_response.png')
+            plt.savefig('plots2/fsfb_response.png')
         plt.show()
     
     def pzmap(self):
