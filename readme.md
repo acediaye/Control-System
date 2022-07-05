@@ -598,12 +598,55 @@ Can see the estimated states $\hat{x}$ following the actual states x open loop. 
 Chosen poles to be $-5 \pm 2j$
 
 # Linear Quadratic Estimator (Kalman Filter)
-Kalman filter is the optimal variant of the full state observer where the gain L is calculated based off the cost function.
-![image](plots3/lqe_response.png)
-![image](plots3/lqe_pzmap.png)
-![image](plots3/lqe_response_dn.png)
-![image](plots3/lqe_response_vd11.png)
-![image](plots3/lqe_response_vd22.png)
+Kalman filter is the optimal variant of the full state observer where the gain L is calculated based off minimizing the cost function.
+
+The cost function
+
+$$J = \int_{0}^{\inf} x^T(t)Qx(t) + u(t)^T Ru(t)dt$$
+
+Where
+- x(t) is the state vector, nx1
+- u(t) is the control vector, mx1
+- Q is like a performance matrix, nxn symmetric positive semidefinite matrix
+- R is like a effort matrix, mxm symmetric positive definite matrix
+
+Q(Vd) and R(Vn) values are weights/uncertainty covariances that penalize the use of the respective disturbance and noise. Values has to be $Q \ge 0$ and $R > 0$. Having high values in Q tells the system that it has high amounts of disturbance (therefore the system should value the measurement signal more) and low values in Q means that it has low disturbance (therefore the system should value the model signal more). High values in R tells the system it has high amount of noise vs low values means that it has low amounts of noise. The cost function J has a unique minimum that can be obtained by solving the Algebraic Riccati Equation.
+
+Gain L can be calculated with the Algebraic Riccati Equation. When using a model with no disturbance and noise, the kalman filter has no problem following the actual states.\
+With $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, mass = 10\
+![image](plots3/lqe_response.png)\
+![image](plots3/lqe_pzmap.png)\
+The gain is optimal at L = [[ 0.09488826], [-0.04549811]]
+
+Model with process noise(disturbance) and measurement noise
+
+$$\dot{x} = Ax + Bu + W$$
+
+$$y = Cx + V$$
+
+where W is the process noise, $W = Vd*d$ and V is the measurement noise, $V = Vn*n$
+
+$$\dot{x} = Ax + Bu + V_d d + 0n$$
+
+$$\dot{x} = Ax + \begin{bmatrix}B & V_d & 0\end{bmatrix} \begin{bmatrix}u \\\ d \\\ n\end{bmatrix}$$
+
+and the output
+
+$$y = Cx + Du + 0*d + V_n n$$
+
+$$y = Cx + \begin{bmatrix}D & 0 & V_n\end{bmatrix} \begin{bmatrix}u \\\ d \\\ n\end{bmatrix}$$
+
+With $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, mass = 10\
+![image](plots3/lqe_response_dn.png)\
+Can see that the estimated states (x est) are closely following the actual states (true x) even though the state observer is fed with a signal with both disturbance and noise (y dist+noise). Signal with only disturbance is (x dist).
+
+With $V_d = \begin{bmatrix}1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, mass = 10\
+![image](plots3/lqe_response_vd11.png)\
+When $V_{d11} = 1$ the position signal is being weighted more to the measurement side so the noise becomes more prominant. The estimated state strays further from the true state and closer to the disturbance state.
+
+With $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 1\end{bmatrix}$, $V_n = 1$, mass = 10\
+![image](plots3/lqe_response_vd22.png)\
+When $V_{d22} = 1$ the velocity signal is being weighted more to the measurement side so the noise becomes more prominant. The estimated state strays further from the true state and closer to the disturbance state.
 
 # Linear Quadratic Gaussian
 A combination of LQR and LQE to optimally control a system. It assumes the process noise and measurement noise are guassian. Usually the user will not have all the state measurements from the output so the output y and input u is fed into the LQE to estimate all the states of the system. Since the LQE has a perfect model of the system, it can take in noisy output and filter out nearly all the noise. The estimated states are then fed into the LQR as it requires access to all the states to produce a feedback loop to the system.\

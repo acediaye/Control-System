@@ -33,6 +33,7 @@ class LQE(object):
         L, S, E = control.lqr(A.T, C.T, self.Vd, self.Vn)  # duality
         L = L.T
         S = S.T
+        print(f'L: {L}')
         # build state observer
         A_ob = A-L@C
         B_ob = np.bmat([B, L])
@@ -97,6 +98,7 @@ class LQE(object):
         L, S, E = control.lqr(A.T, C.T, self.Vd, self.Vn)
         L = L.T
         S = S.T
+        print(f'L: {L}')
         # build state estimator
         A_ob = A-L@C
         B_ob = np.bmat([B, L])

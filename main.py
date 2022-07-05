@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))
     # REFERENCE = 1*np.sin(10*TIME)
     
-    mymodel = model.Mass_Spring_Damper_System(1, 20, 10)  # 1 or 10 mass
+    mymodel = model.Mass_Spring_Damper_System(10, 20, 10)  # 1 or 10 mass
     ss_plant = mymodel.plant()
     
     Kp = 350
