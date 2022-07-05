@@ -208,9 +208,9 @@ $$\dot u(t) = K_{k} \dot e(t) + K_{i}e(t) + K_{d} \ddot e(t)$$
 Becomes
 
 $$\begin{aligned}
-\frac{u(t_{k}) - u(t_{k-1})} {\Delta t}
-= K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
-+ K_{i} e(t_{k})
+\frac{u(t_{k}) - u(t_{k-1})} {\Delta t} \
+= K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t} \
++ K_{i} e(t_{k})\
 + K_{d} \frac{\dot e(t_{k}) - \dot e(t_{k-1})} {\Delta t}
 \end{aligned}$$
 
