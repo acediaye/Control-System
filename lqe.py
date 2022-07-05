@@ -41,7 +41,7 @@ class LQE(object):
                          [0, 0]])
         u = np.array([reference])
         y = np.array([self.y_ol_out])
-        print(np.shape(u), np.shape(y))
+        # print(np.shape(u), np.shape(y))
         u_ob = np.bmat([[u],
                        [y]])
         # x0 = np.array([[0.5], [-0.5]])
@@ -55,11 +55,11 @@ class LQE(object):
             raise RuntimeError('run excite')
         plt.figure()
         # plt.plot(self.time_out, self.reference, label='ref')
-        plt.plot(self.time_out, self.y_ol_out, label='y_ol')
+        plt.plot(self.time_out, self.y_ol_out, label='y (ol)')
         for i in range(len(self.x_ol_out)):
-            plt.plot(self.time_out, self.x_ol_out[i, :], '-', label=f'x_ol{i+1}')
+            plt.plot(self.time_out, self.x_ol_out[i, :], '-', label=f'x (ol) {i+1}')
         for i in range(len(self.x_hat)):
-            plt.plot(self.time_out, self.x_hat[i, :], '--', label=f'x_hat{i+1}')
+            plt.plot(self.time_out, self.x_hat[i, :], '--', label=f'xhat {i+1}')
         plt.legend(loc='right')
         plt.ylabel('amplitude')
         plt.xlabel('time')
@@ -125,13 +125,13 @@ class LQE(object):
         # plotting each system
         plt.figure()
         for i in range(len(yout_dn)):
-            plt.plot(tout, yout_dn[i,:], '-', label=f'y dist+noise_{i+1}')  # with dist and noise
+            plt.plot(tout, yout_dn[i,:], '-', label=f'y dist+noise {i+1}')  # with dist and noise
         for i in range(len(xout_d)):
-            plt.plot(tout, xout_d[i,:], '-', label=f'x dist_{i+1}')  # with dist
+            plt.plot(tout, xout_d[i,:], '-', label=f'x dist {i+1}')  # with dist
         for i in range(len(xout)):
-            plt.plot(tout, xout[i, :], '-', label=f'true x_{i+1}')  # true
+            plt.plot(tout, xout[i, :], '-', label=f'true x {i+1}')  # true
         for i in range(len(xhat)):
-            plt.plot(tout, xhat[i,:], '--', label=f'x est_{i+1}')  # x hat
+            plt.plot(tout, xhat[i,:], '--', label=f'x est {i+1}')  # x hat
         plt.legend(loc='right')
         plt.ylabel('amplitude')
         plt.xlabel('time')
