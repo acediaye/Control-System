@@ -209,63 +209,40 @@ Becomes
 
 $$\begin{aligned}
 \frac{u(t_{k}) - u(t_{k-1})} {\Delta t}
-=\
-K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
-+\
-K_{i} e(t_{k})
-+\
-K_{d} \frac{\dot e(t_{k}) - \dot e(t_{k-1})} {\Delta t}
+= K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
++ K_{i} e(t_{k})
++ K_{d} \frac{\dot e(t_{k}) - \dot e(t_{k-1})} {\Delta t}
 \end{aligned}$$
 
 $$\begin{aligned}
 \frac{u(t_{k}) - u(t_{k-1})} {\Delta t}
-=\
-K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
-+\
-K_{i} e(t_{k})
-+\
-K_{d} \frac{\frac{e(t_{k}) - e(t_{k-1})} {\Delta t} -\frac{e(t_{k-1}) - e(t_{k-2})} {\Delta t}}{\Delta t}
+= K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
++ K_{i} e(t_{k})
++ K_{d} \frac{\frac{e(t_{k}) - e(t_{k-1})} {\Delta t} -\frac{e(t_{k-1}) - e(t_{k-2})} {\Delta t}}{\Delta t}
 \end{aligned}$$
 
 $$\begin{aligned}
 u(t_{k}) - u(t_{k-1})
-=\
-K_{p} (e(t_{k}) - e(t_{k-1}))
-+\
-K_{i}\Delta t e(t_{k})
-+\
-\frac{K_{d}} {\Delta t}
-(e(t_{k}) - 2e(t_{k-1}) + e(t_{k-2}))
+= K_{p} (e(t_{k}) - e(t_{k-1}))
++ K_{i}\Delta t e(t_{k})
++ \frac{K_{d}} {\Delta t} (e(t_{k}) - 2e(t_{k-1}) + e(t_{k-2}))
 \end{aligned}$$
 
 $$\begin{aligned}
-u[k]
-=\
-u[k-1]
-+\
-K_{p} e[k]
--\
-K_{p} e[k-1]
-+\
-K_{i} \Delta t e[k]
-+\
-\frac{K_{d}} {\Delta t} e[k]
--\
-\frac{K_{d}} {\Delta t} 2e[k-1]
-+\
-\frac{K_{d}} {\Delta t} e[k-2]
+u[k] = u[k-1]
++ K_{p} e[k]
+- K_{p} e[k-1]
++ K_{i} \Delta t e[k]
++ \frac{K_{d}} {\Delta t} e[k]
+- \frac{K_{d}} {\Delta t} 2e[k-1]
++ \frac{K_{d}} {\Delta t} e[k-2]
 \end{aligned}$$
 
 $$\begin{aligned}
-u[k]
-=\
-u[k-1]
-+\
-(K_{p} + K_{i} \Delta t + \frac{K_{d}} {\Delta t})e[k]
-+\
-(-K_{p} -2\frac{K_{d}} {\Delta t}) e[k-1]
-+\
-\frac{K_{d}} {\Delta t} e[k-2]
+u[k] = u[k-1]
++ (K_{p} + K_{i} \Delta t + \frac{K_{d}} {\Delta t})e[k]
++ (-K_{p} -2\frac{K_{d}} {\Delta t}) e[k-1]
++ \frac{K_{d}} {\Delta t} e[k-2]
 \end{aligned}$$
 
 # Transfer Function
@@ -375,7 +352,7 @@ $$O = \begin{bmatrix}C \\\ CA \\\ CA^2 \\\ ... \\\ CA^{n-1}\end{bmatrix}$$
 
 Where n is the size of the state vector. The system is observable if it has full row rank, rank(O) = n.
 
-# Full State Feedback
+# Full State Feedback (Tracking)
 A feedback method to place the closed loop poles of a plant in user determined locations in the complex plane. Since the poles/eigenvalues of the system determine the response of the system, the user wants to choose where to place the poles.\
 ![image](pics/full_state_feedback.png)
 
@@ -391,7 +368,7 @@ The control law is
 
 $$u(t) = rK_r - Kx(t)$$
 
-($K_r$ is N in the picture above)
+($K_r$ is N in the picture above) Normally the control law is $u(t) = -Kx(t)$, but am adding a tracking term.
 
 Substituting u into state space
 
@@ -466,7 +443,7 @@ Can see that the response diverges away from 0, meaning that the system is unsta
 Can see that since the poles are on the left side of the complex plane, the output is unstable.
 
 # Linear Quadratic Regulator (Tracking)
-LQR is a type of optimal controller and operates the system at a minimum cost. It assumes that the dynamics model is perfect so the solution is optimal, unlike robust controller where the model doesn't have to be perfect.
+LQR is a type of optimal controller of a full state feedback and operates the system at a minimum cost. It assumes that the dynamics model is perfect so the solution is optimal, unlike robust controller where the model doesn't have to be perfect.
 
 The cost function
 
@@ -539,12 +516,40 @@ Having low weight on $R_{1}$ tells the system it is allowed to have high values 
 K = [17.41657387 28.05695045], $K_r = 37.4$\
 Poles at $-1.9 \pm 0.35j$
 
-# Linear Quadratic Estimator (or Kalman Filter)
+# Full State Observer (Luenberger Observer)
+Usually the user will not have the measurements of all the states to a real system. Using the measurements of the input and output of the real system the state observer can estimate all the internal state of the real system.\
+![image](pics/luenberger_observer.png)\
+The equations for the system. Hat means estimations rather than actual.
+
+$$\dot{\hat{x}} = A \hat{x} + Bu + L(y - \hat{y})$$
+
+$$\hat{y} = C \hat{x} + D u$$
+
+---
+
+$$\dot{\hat{x}} = A \hat{x} + Bu + Ly - L \hat{y}$$
+
+Subtituting $\hat{y} = C \hat{x}$, when D = 0
+
+$$\dot{\hat{x}} = A \hat{x} + Bu + Ly - LC \hat{x}$$
+
+$$
+\dot{\hat{x}} = (A-LC) \hat{x} + 
+\begin{bmatrix}B & L\end{bmatrix}
+\begin{bmatrix}u \\\ y\end{bmatrix}
+$$
+
+A-LC becomes the new A matrix while [u; y] becomes the new u matrix.
+
+# Linear Quadratic Estimator (Kalman Filter)
 
 # Linear Quadratic Gaussian
+A combination of LQR and LQE to optimally control a system. It assumes the process noise and measurement noise are guassian. Usually the user will not have all the state measurements from the output so the output y and input u is fed into the LQE to estimate all the states of the system. Since the LQE has a perfect model of the system, it can take in noisy output and filter out nearly all the noise. The estimated states are then fed into the LQR as it requires access to all the states to produce a feedback loop to the system.\
+![image](pics/linear_quadratic_guassian.png)
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github
 [Control Tutorial](https://ctms.engin.umich.edu/CTMS/index.php?aux=Home) for matlab/simulink by CMU
 [PID](https://en.wikipedia.org/wiki/PID_controller) wiki
 [LQR](https://www.youtube.com/playlist?list=PLn8PRpmsu08podBgFw66-IavqU2SqPg_w) by matlab
+[Control Tutorial](https://www.youtube.com/playlist?list=PLMrJAkhIeNNR20Mz-VpzgfQs5zrYi085m) by Steve Brunton
