@@ -12,14 +12,14 @@ switch = {'open loop': False,
           'pid': False,
           'fsfb': False,
           'lqr': False,
-          'fsob': False,
+          'fsob': True,
           'lqe': True}
 # save plots
 save = False
 
 if __name__ == '__main__':
     TIME_STEP = 0.003
-    TIME = np.arange(0+TIME_STEP, 3+TIME_STEP, TIME_STEP)  # used t-t_prev. cannot start at 0 or else divide by 0-0
+    TIME = np.arange(0+TIME_STEP, 10+TIME_STEP, TIME_STEP)  # used t-t_prev. cannot start at 0 or else divide by 0-0
     print(f'time: {len(TIME)}')
     REFERENCE = 1*np.ones(len(TIME))
     # REFERENCE = 1*np.append(np.ones(len(TIME)//2), np.zeros(len(TIME)//2))

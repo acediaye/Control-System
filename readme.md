@@ -229,7 +229,8 @@ K_{i}\Delta t e(t_{k}) + \
 \end{aligned}$$
 
 $$\begin{aligned}
-u[k] = u[k-1] + \
+u[k] = \
+u[k-1] + \
 K_{p} e[k] - \
 K_{p} e[k-1] + \
 K_{i} \Delta t e[k] + \
@@ -239,7 +240,8 @@ K_{i} \Delta t e[k] + \
 \end{aligned}$$
 
 $$\begin{aligned}
-u[k] = u[k-1] + \
+u[k] = \
+u[k-1] + \
 (K_{p} + K_{i} \Delta t + \frac{K_{d}} {\Delta t})e[k] + \
 (-K_{p} -2\frac{K_{d}} {\Delta t}) e[k-1] + \
 \frac{K_{d}} {\Delta t} e[k-2]
@@ -539,17 +541,43 @@ $$
 \begin{bmatrix}u \\\ y\end{bmatrix}
 $$
 
-A-LC becomes the new A matrix while [u; y] becomes the new u matrix.
+$A-LC$ becomes the new A matrix, $\begin{bmatrix}B & L\end{bmatrix}$ becomes the new B matrix, while $\begin{bmatrix}u \\\ y\end{bmatrix}$ becomes the new u matrix. C can be identity due to knowing all the state estimations and D becomes a matrix of 0s. The system A has given fixed eigvenvalues, and now with A-LC can shift the eigenvalues to any user chosen poles.
+
+Error is defined as $e = x - \hat{x}$
+
+$$\dot{e} = \dot{x} - \dot{\hat{x}}$$
+
+$$\dot{e} = Ax + Bu - A\hat{x} -Bu-Ly + L\hat{y}$$
+
+$$\dot{e} = A(x - \hat{x}) - LCx + LC\hat{x}$$
+
+$$\dot{e} = A(x - \hat{x}) - LC(x-\hat{x})$$
+
+$$\dot{e} = (A-LC)e$$
+
+This shows that the estimation states will converge to the actual states if the eigenvalues of $A-LC$ is on the left side of the complex plane. 
+
+With mass = 10\
+![image](plots3/fsob_response.png)\
+Can see the estimated states $\hat{x}$ following the actual states x open loop. This example did not introduce disturbances or noise into the model so the estimation model matches the plant model easily. The estimator only took in the input u and output y (position) and can derive all the states including velocity.\
+![image](plots3/fsob_pzmap.png)\
+Chosen poles to be $-5 \pm 2j$
 
 # Linear Quadratic Estimator (Kalman Filter)
+
+![image](plots3/lqe_response.png)
+![image](plots3/lqe_pzmap.png)
+![image](plots3/lqe_response_dn.png)
+![image](plots3/lqe_response_vd11.png)
+![image](plots3/lqe_response_vd22.png)
 
 # Linear Quadratic Gaussian
 A combination of LQR and LQE to optimally control a system. It assumes the process noise and measurement noise are guassian. Usually the user will not have all the state measurements from the output so the output y and input u is fed into the LQE to estimate all the states of the system. Since the LQE has a perfect model of the system, it can take in noisy output and filter out nearly all the noise. The estimated states are then fed into the LQR as it requires access to all the states to produce a feedback loop to the system.\
 ![image](pics/linear_quadratic_guassian.png)
 
 # References
-[KaTex](https://katex.org/docs/supported.html) Markup used by github
-[Control Tutorial](https://ctms.engin.umich.edu/CTMS/index.php?aux=Home) for matlab/simulink by CMU
-[PID](https://en.wikipedia.org/wiki/PID_controller) wiki
-[LQR](https://www.youtube.com/playlist?list=PLn8PRpmsu08podBgFw66-IavqU2SqPg_w) by matlab
+[KaTex](https://katex.org/docs/supported.html) Markup used by github\
+[Control Tutorial](https://ctms.engin.umich.edu/CTMS/index.php?aux=Home) for matlab/simulink by CMU\
+[PID](https://en.wikipedia.org/wiki/PID_controller) wiki\
+[LQR](https://www.youtube.com/playlist?list=PLn8PRpmsu08podBgFw66-IavqU2SqPg_w) by matlab\
 [Control Tutorial](https://www.youtube.com/playlist?list=PLMrJAkhIeNNR20Mz-VpzgfQs5zrYi085m) by Steve Brunton
