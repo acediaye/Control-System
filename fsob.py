@@ -44,6 +44,7 @@ class FSOB(object):
         # x0 = np.array([[0.5], [-0.5]])
         self.ss_obsv = control.ss(A_ob, B_ob, C_ob, D_ob)
         self.time_out, self.x_hat = control.forced_response(self.ss_obsv, time, u_ob)
+        print(f'L: {L}')
         return self.time_out, self.x_hat
     
     def graph(self, save):

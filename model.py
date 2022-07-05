@@ -52,7 +52,7 @@ class Mass_Spring_Damper_System(object):
         C = np.array([[1, 0]])
         D = np.array([[0]])
         self.ss_plant = control.ss(A, B, C, D)
-        # print(f'state space:\n{self.ss_plant}')
+        print(f'state space:\n{self.ss_plant}')
         return self.ss_plant
 
     def excite(self, time: np.ndarray, reference: np.ndarray) -> tuple:

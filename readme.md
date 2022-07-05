@@ -543,6 +543,40 @@ $$
 
 $A-LC$ becomes the new A matrix, $\begin{bmatrix}B & L\end{bmatrix}$ becomes the new B matrix, while $\begin{bmatrix}u \\\ y\end{bmatrix}$ becomes the new u matrix. C can be identity due to knowing all the state estimations and D becomes a matrix of 0s. The system A has given fixed eigvenvalues, and now with A-LC can shift the eigenvalues to any user chosen poles.
 
+To find the eigenvalues of the plant.
+
+$$A = \begin{bmatrix}0 & 1 \\\ -20 & -10\end{bmatrix}$$
+
+$$C = \begin{bmatrix}1 & 0\end{bmatrix}$$
+
+$$det[sI - A] = 0$$
+
+$$s^2 + 10s +20 = 0$$
+
+$$s = -5 \pm \sqrt{5}$$
+
+$$s = -2.76 and -7.24$$
+
+To find the new characteristics of the A matrix where $A-LC$
+
+$$det[sI - (A-LC)] = 0$$
+
+$$s^2 + (10 + L_1)s + (10L_1 + L_2 + 20) = 0$$
+
+The poles chosen to be $-5 \pm 2j$. 
+
+$$(s+5-2j)(s+5+2j) = 0$$
+
+$$s^2 + 10s + 29 = 0$$
+
+The L gain values are
+
+$$10 + L_1 = 10$$
+
+$$10L_1 + L_2 + 20 = 29$$
+
+$$L = \begin{bmatrix}0 \\\ 9\end{bmatrix}$$
+
 Error is defined as $e = x - \hat{x}$
 
 $$\dot{e} = \dot{x} - \dot{\hat{x}}$$
@@ -564,7 +598,7 @@ Can see the estimated states $\hat{x}$ following the actual states x open loop. 
 Chosen poles to be $-5 \pm 2j$
 
 # Linear Quadratic Estimator (Kalman Filter)
-
+Kalman filter is the optimal variant of the full state observer where the gain L is calculated based off the cost function.
 ![image](plots3/lqe_response.png)
 ![image](plots3/lqe_pzmap.png)
 ![image](plots3/lqe_response_dn.png)
