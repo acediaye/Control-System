@@ -215,34 +215,34 @@ K_{d} \frac{\dot e(t_{k}) - \dot e(t_{k-1})} {\Delta t}
 \end{aligned}$$
 
 $$\begin{aligned}
-\frac{u(t_{k}) - u(t_{k-1})} {\Delta t}
-= K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t}
-+ K_{i} e(t_{k})
-+ K_{d} \frac{\frac{e(t_{k}) - e(t_{k-1})} {\Delta t} -\frac{e(t_{k-1}) - e(t_{k-2})} {\Delta t}}{\Delta t}
+\frac{u(t_{k}) - u(t_{k-1})} {\Delta t} = \
+K_{p} \frac{e(t_{k}) - e(t_{k-1})} {\Delta t} + \
+K_{i} e(t_{k}) + \
+K_{d} \frac{\frac{e(t_{k}) - e(t_{k-1})} {\Delta t} -\frac{e(t_{k-1}) - e(t_{k-2})} {\Delta t}}{\Delta t}
 \end{aligned}$$
 
 $$\begin{aligned}
-u(t_{k}) - u(t_{k-1})
-= K_{p} (e(t_{k}) - e(t_{k-1}))
-+ K_{i}\Delta t e(t_{k})
-+ \frac{K_{d}} {\Delta t} (e(t_{k}) - 2e(t_{k-1}) + e(t_{k-2}))
+u(t_{k}) - u(t_{k-1}) = \
+K_{p} (e(t_{k}) - e(t_{k-1})) + \
+K_{i}\Delta t e(t_{k}) + \
+\frac{K_{d}} {\Delta t} (e(t_{k}) - 2e(t_{k-1}) + e(t_{k-2}))
 \end{aligned}$$
 
 $$\begin{aligned}
-u[k] = u[k-1]
-+ K_{p} e[k]
-- K_{p} e[k-1]
-+ K_{i} \Delta t e[k]
-+ \frac{K_{d}} {\Delta t} e[k]
-- \frac{K_{d}} {\Delta t} 2e[k-1]
-+ \frac{K_{d}} {\Delta t} e[k-2]
+u[k] = u[k-1] + \
+K_{p} e[k] - \
+K_{p} e[k-1] + \
+K_{i} \Delta t e[k] + \
+\frac{K_{d}} {\Delta t} e[k] - \
+\frac{K_{d}} {\Delta t} 2e[k-1] + 
+\frac{K_{d}} {\Delta t} e[k-2]
 \end{aligned}$$
 
 $$\begin{aligned}
-u[k] = u[k-1]
-+ (K_{p} + K_{i} \Delta t + \frac{K_{d}} {\Delta t})e[k]
-+ (-K_{p} -2\frac{K_{d}} {\Delta t}) e[k-1]
-+ \frac{K_{d}} {\Delta t} e[k-2]
+u[k] = u[k-1] + \
+(K_{p} + K_{i} \Delta t + \frac{K_{d}} {\Delta t})e[k] + \
+(-K_{p} -2\frac{K_{d}} {\Delta t}) e[k-1] + \
+\frac{K_{d}} {\Delta t} e[k-2]
 \end{aligned}$$
 
 # Transfer Function
