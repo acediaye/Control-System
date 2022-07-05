@@ -51,7 +51,7 @@ class FSOB(object):
             raise RuntimeError('run excite')
         plt.figure()
         # plt.plot(self.time_out, self.reference, label='ref')
-        plt.plot(self.time_out, self.y_ol_out, label='y (ol)')
+        plt.plot(self.time_out, self.y_ol_out, label='y_ol')
         for i in range(len(self.x_ol_out)):
             plt.plot(self.time_out, self.x_ol_out[i, :], '-', label=f'x_ol{i+1}')
         for i in range(len(self.x_hat)):

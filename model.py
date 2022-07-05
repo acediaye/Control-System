@@ -11,7 +11,7 @@ class Mass_Spring_Damper_System(object):
         self.m = M  # mass constant
         self.c = C  # dampening constant
         self.k = K  # spring constant
-        self.ss_plant = None  #plant state space 
+        self.ss_plant = None  # plant state space 
 
         # save response values
         self.time_out = None

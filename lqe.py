@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class LQE(object):
-    def __init__(self, Q: np.ndarray, R: np.ndarray):
-        self.Q = Q  # Vd?
-        self.R = R  # Vn?
+    def __init__(self, Vd: np.ndarray, Vn: np.ndarray):
+        self.Vd = Vd  # Wd = Vd*d?
+        self.Vn = Vn  # Wn = Vn*n?
         self.ss_plant = None  # state space plant
         self.ss_obsv = None
         
@@ -28,13 +28,12 @@ class LQE(object):
         
         # open loop response
         self.time_out, self.y_ol_out, self.x_ol_out = control.forced_response(self.ss_plant, time, reference, return_x=True)
-        # state observer response
+        # find L gain
         # L = control.place(A.T, C.T, self.poles_desire).T
-        Vd = 1*np.eye(2)  #disturbance 0.1
-        Vn = 1  # noise
-        L, S, E = control.lqr(A.T, C.T, Vd, Vn)  # duality
+        L, S, E = control.lqr(A.T, C.T, self.Vd, self.Vn)  # duality
         L = L.T
         S = S.T
+        # build state observer
         A_ob = A-L@C
         B_ob = np.bmat([B, L])
         C_ob = np.eye(2)
@@ -42,9 +41,11 @@ class LQE(object):
                          [0, 0]])
         u = np.array([reference])
         y = np.array([self.y_ol_out])
+        print(np.shape(u), np.shape(y))
         u_ob = np.bmat([[u],
                        [y]])
         # x0 = np.array([[0.5], [-0.5]])
+        # simulate system
         self.ss_obsv = control.ss(A_ob, B_ob, C_ob, D_ob)
         self.time_out, self.x_hat = control.forced_response(self.ss_obsv, time, u_ob)
         return self.time_out, self.x_hat
@@ -54,7 +55,7 @@ class LQE(object):
             raise RuntimeError('run excite')
         plt.figure()
         # plt.plot(self.time_out, self.reference, label='ref')
-        plt.plot(self.time_out, self.y_ol_out, label='y (ol)')
+        plt.plot(self.time_out, self.y_ol_out, label='y_ol')
         for i in range(len(self.x_ol_out)):
             plt.plot(self.time_out, self.x_ol_out[i, :], '-', label=f'x_ol{i+1}')
         for i in range(len(self.x_hat)):
@@ -74,5 +75,67 @@ class LQE(object):
         plt.figure()
         poles, zeros = control.pzmap(self.ss_obsv, plot=True)
         print(f'poles: {poles}, zeros: {zeros}')
+        plt.show()
+    
+    def excite_dist_noise(self, plant: control.StateSpace, time: np.ndarray, reference: np.ndarray):
+        self.reference = reference
+        # build plant system
+        self.ss_plant = plant
+        A, B, C, D = control.ssdata(plant)
+        # check observability
+        obsv = control.obsv(A, C)
+        rank_o = np.linalg.matrix_rank(obsv)
+        if rank_o != np.shape(A)[0]:
+            raise RuntimeError('not full row rank')
+        # build plant with disturbance and noise system
+        B_aug = np.bmat([B, self.Vd, 0*B])  # 0 of matrix size B
+        D_aug = np.bmat([D, 0*C, self.Vn])  # 0 of matrix size C
+        ss_plant_dn = control.ss(A, B_aug, C, D_aug)
+        # build plant with disturbance system
+        ss_plant_d = control.ss(A, B_aug, C, 0*D_aug) # 0 of matrix size D_aug
+        # find L gain
+        L, S, E = control.lqr(A.T, C.T, self.Vd, self.Vn)
+        L = L.T
+        S = S.T
+        # build state estimator
+        A_ob = A-L@C
+        B_ob = np.bmat([B, L])
+        C_ob = np.eye(2)
+        D_ob = np.array([[0, 0],
+                         [0, 0]])
+        self.ss_obsv = control.ss(A_ob, B_ob, C_ob, D_ob)
+        # build u augmented with disturbance and noise
+        u = np.array([reference])
+        u_dist = np.random.randn(2, len(time))
+        u_noise = 0.1*np.random.randn(1, len(time))
+        u_aug = np.bmat([[u],
+                         [u_dist],
+                         [u_noise]])
+        print(np.shape(u), np.shape(u_dist), np.shape(u_noise), np.shape(u_aug))
+        # simulate each system
+        tout, yout_dn = control.forced_response(ss_plant_dn, time, u_aug)
+        tout, yout_d, xout_d = control.forced_response(ss_plant_d, time, u_aug, return_x=True)
+        tout, yout, xout = control.forced_response(plant, time, reference, return_x=True)
+        y = np.array(yout_dn)
+        # print(np.shape(y))
+        u_ob = np.bmat([[u],  # clean input
+                        [y]])  # output with disturbance and noise
+        print(np.shape(u), np.shape(y), np.shape(u_ob))
+        tout, xhat = control.forced_response(self.ss_obsv, time, u_ob)
+        # plotting each system
+        plt.figure()
+        for i in range(len(yout_dn)):
+            plt.plot(tout, yout_dn[i,:], '-', label=f'y dist+noise_{i+1}')  # with dist and noise
+        for i in range(len(xout_d)):
+            plt.plot(tout, xout_d[i,:], '-', label=f'x dist_{i+1}')  # with dist
+        for i in range(len(xout)):
+            plt.plot(tout, xout[i, :], '-', label=f'true x_{i+1}')  # true
+        for i in range(len(xhat)):
+            plt.plot(tout, xhat[i,:], '--', label=f'x est_{i+1}')  # x hat
+        plt.legend(loc='right')
+        plt.ylabel('amplitude')
+        plt.xlabel('time')
+        plt.title('LQE with disturbance and noise')
+        plt.grid()
         plt.show()
         
