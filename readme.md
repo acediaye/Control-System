@@ -712,7 +712,7 @@ y =\
 
 The new states now includes position, velocity, the difference between actual and estimated position, and difference between actual and estimated velocity.
 
-![image](plots4/lqg_response.png)
+![image](plots4/lqg_response.png)\
 Can see the position (x1) follows the output (y) at desired reference of 1. The velocity (x2) starts high due to moving mass and ends up at 0 when the position is at desired location. The position and velocity errors are at 0 due to the observer deriving the actual states as the plant model and observer model are the same (no disturbance or nosie).
 
 # References
