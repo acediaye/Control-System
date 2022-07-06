@@ -5,6 +5,7 @@ import fsfb
 import lqr
 import fsob
 import lqe
+import lqg
 
 # turn parts of main on or off
 switch = {'open loop': False, 
@@ -13,7 +14,8 @@ switch = {'open loop': False,
           'fsfb': False,
           'lqr': False,
           'fsob': False,
-          'lqe': True}
+          'lqe': False,
+          'lqg': True}
 # save plots
 save = False
 
@@ -82,10 +84,22 @@ if __name__ == '__main__':
     
     if switch['lqe']:
         Vd = np.array([[0.1, 0], [0, 0.1]])  # 2x2  values 0.1 or 1
-        # Vn broken? lqe command not matching lqr.T
+        # Wd Wn wrong? lqe command not matching lqr.T
+        # need to fix Qd=w.T*W, Qn=v.T*v, not Wd=Vd*d, Wn=Vn*n
         Vn = np.array([[1]])  # 1x1  # values 1
         mylqe = lqe.LQE(Vd, Vn)
         # tout, xhat = mylqe.excite(ss_plant, TIME, REFERENCE)
         # mylqe.graph(save)
         # mylqe.pzmap()
         mylqe.excite_dist_noise(ss_plant, TIME, REFERENCE)
+
+    if switch['lqg']:
+        Vd = np.array([[0.1, 0], [0, 0.1]]) 
+        Vn = 1
+        Q = np.array([[1, 0], [0, 1]]) 
+        R = 1
+        mylqg = lqg.LQG(Q, R, Vd, Vn)
+        mylqg.excite(ss_plant, TIME, REFERENCE)
+        mylqg.graph(save)
+        mylqg.pzmap()
+        

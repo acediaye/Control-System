@@ -380,7 +380,7 @@ $$\dot x(t) = Ax(t) - BKx(t) + BK_rr$$
 
 $$\dot x(t) = (A - BK)x(t) + BK_rr$$
 
-$A-BK$ becomes the new A system matrix of the close loop system. Since the eigenvalues of the old A matrix is fixed by the model, the new A matrix means the user can move the eigenvalues to desired places by changing the K gain matrix. The eigvalues of new A can be placed anywhere if A, B are controllable.
+$A-BK$ becomes the new A system matrix of the close loop system. $BK_r$ becomes the new B system matrix. Since the eigenvalues of the old A matrix is fixed by the model, the new A matrix means the user can move the eigenvalues to desired places by changing the K gain matrix. The eigvalues of new A can be placed anywhere if A, B are controllable.
 
 To find the eigenvalues of a system by its characteristic equation.
 
@@ -651,6 +651,69 @@ When $V_{d22} = 1$ the velocity signal is being weighted more to the measurement
 # Linear Quadratic Gaussian
 A combination of LQR and LQE to optimally control a system. It assumes the process noise and measurement noise are guassian. Usually the user will not have all the state measurements from the output so the output y and input u is fed into the LQE to estimate all the states of the system. Since the LQE has a perfect model of the system, it can take in noisy output and filter out nearly all the noise. The estimated states are then fed into the LQR as it requires access to all the states to produce a feedback loop to the system.\
 ![image](pics/linear_quadratic_guassian.png)
+
+The state space equations
+
+$$\dot{x} = Ax + Bu$$
+
+$$y = Cx + Du$$
+
+control law with estimated states
+
+$$u = -k \hat{x} + K_r r$$
+
+observer equations
+
+$$\dot{\hat{x}} = A \hat{x} + Bu + L(y- \hat{y})$$
+
+$$\hat{y} = C \hat{x} + Du$$
+
+Error is defined to be $e = x - \hat{x}$, the difference between actual states and estimated states.
+
+---
+
+Substituting u in
+
+$$\dot{x} = Ax - BK \hat{x} + BK_r r$$
+
+Sutstituting $\hat{x} = x - (x - \hat{x})$
+
+$$\dot{x} = Ax - BKx + BK(x-\hat{x}) + BK_r r$$
+
+$$\dot{x} = (A-BK)x + BKe + BK_r r$$
+
+using $\dot{e} = \dot{x} - \dot{\hat{x}}$
+
+$$\dot{e} = Ax + Bu - A\hat{x} - Bu -Ly + L\hat{y}$$
+
+$$\dot{e} = A(x - \hat{x}) - LCx + LC\hat{x}$$
+
+$$\dot{e} = A(x - \hat{x}) - LC(x-\hat{x})$$
+
+$$\dot{e} = (A-LC)e$$
+
+The new system states becomes
+
+$$\begin{aligned}
+\begin{bmatrix}\dot{x} \\\ \dot{e}\end{bmatrix} =\
+\begin{bmatrix}A-BK & BK \\\ 0 & A-LC\end{bmatrix}
+\begin{bmatrix}x \\\ e \end{bmatrix} +\
+\begin{bmatrix}BK_r \\\ 0\end{bmatrix}
+\begin{bmatrix}r\end{bmatrix}
+\end{aligned}$$
+
+$$\begin{aligned}
+y =\
+\begin{bmatrix}C & 0\end{bmatrix}
+\begin{bmatrix}x \\\ e\end{bmatrix} +\
+\begin{bmatrix}D\end{bmatrix}
+\begin{bmatrix}r\end{bmatrix}
+\end{aligned}$$
+
+The new states now includes position, velocity, the difference between actual and estimated position, and difference between actual and estimated velocity.
+
+![image](plots4/lqg_response.png)
+Can see the position (x1) follows the output (y) at desired reference of 1. The velocity (x2) starts high due to moving mass and ends up at 0 when the position is at desired location. The position and velocity errors are at 0 due to the observer deriving the actual states as the plant model and observer model are the same (no disturbance or nosie).
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github\

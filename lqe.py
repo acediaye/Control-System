@@ -37,9 +37,8 @@ class LQE(object):
         # build state observer
         A_ob = A-L@C
         B_ob = np.bmat([B, L])
-        C_ob = np.eye(2)
-        D_ob = np.array([[0, 0],
-                         [0, 0]])
+        C_ob = np.eye(len(A))
+        D_ob = np.array(np.zeros((np.shape(C_ob)[0], np.shape(B_ob)[1])))
         u = np.array([reference])
         y = np.array([self.y_ol_out])
         # print(np.shape(u), np.shape(y))
@@ -89,11 +88,11 @@ class LQE(object):
         if rank_o != np.shape(A)[0]:
             raise RuntimeError('not full row rank')
         # build plant with disturbance and noise system
-        B_aug = np.bmat([B, self.Vd, 0*B])  # 0 of matrix size B
-        D_aug = np.bmat([D, 0*C, self.Vn])  # 0 of matrix size C
+        B_aug = np.bmat([B, self.Vd, np.zeros(np.shape(B))])  # 0 of matrix size B
+        D_aug = np.bmat([D, np.zeros(np.shape(C)), self.Vn])  # 0 of matrix size C
         ss_plant_dn = control.ss(A, B_aug, C, D_aug)
         # build plant with disturbance system
-        ss_plant_d = control.ss(A, B_aug, C, 0*D_aug) # 0 of matrix size D_aug
+        ss_plant_d = control.ss(A, B_aug, C, np.zeros(np.shape(D_aug))) # 0 of matrix size D_aug
         # find L gain
         L, S, E = control.lqr(A.T, C.T, self.Vd, self.Vn)
         L = L.T
@@ -102,7 +101,7 @@ class LQE(object):
         # build state estimator
         A_ob = A-L@C
         B_ob = np.bmat([B, L])
-        C_ob = np.eye(2)
+        C_ob = np.eye(len(A))
         D_ob = np.array([[0, 0],
                          [0, 0]])
         self.ss_obsv = control.ss(A_ob, B_ob, C_ob, D_ob)

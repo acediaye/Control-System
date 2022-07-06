@@ -32,11 +32,10 @@ class FSOB(object):
         self.time_out, self.y_ol_out, self.x_ol_out = control.forced_response(self.ss_plant, time, reference, return_x=True)
         # state observer response
         L = control.place(A.T, C.T, self.poles_desire).T
-        A_ob = A-L@C
-        B_ob = np.bmat([B, L])
-        C_ob = np.eye(2)
-        D_ob = np.array([[0, 0],
-                         [0, 0]])
+        A_ob = A-L@C  # 2x2
+        B_ob = np.bmat([B, L])  # 2x2
+        C_ob = np.eye(len(A))  # 2x2
+        D_ob = np.array(np.zeros((np.shape(C_ob)[0], np.shape(B_ob)[1])))  # 2x2
         u = np.array([reference])
         y = np.array([self.y_ol_out])
         u_ob = np.bmat([[u],
