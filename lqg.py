@@ -28,7 +28,9 @@ class LQG(object):
         Dce = D
         # print(np.shape(Ace), np.shape(Bce), np.shape(Cce), np.shape(Dce))
         self.ss_ce = control.ss(Ace, Bce, Cce, Dce)
-        self.time_out, self.y_out, self.x_out = control.forced_response(self.ss_ce, time, reference, return_x=True)
+        # x0 = np.array([[1], [-1], [2], [-2]])
+        x0 = np.zeros((4,1))
+        self.time_out, self.y_out, self.x_out = control.forced_response(self.ss_ce, time, reference, x0, return_x=True)
         # print(np.shape(self.y_out), np.shape(self.x_out))
         dc = control.dcgain(self.ss_ce)
         K_r = np.array([[1/dc]])
