@@ -15,11 +15,19 @@ class LQG(object):
         
     def excite(self, plant: control.StateSpace, time: np.ndarray, reference: np.ndarray) -> tuple:
         A, B, C, D = control.ssdata(plant)
+        # check observability
+        obsv = control.obsv(A, C)
+        rank_o = np.linalg.matrix_rank(obsv)
+        if rank_o != np.shape(A)[0]:
+            raise RuntimeError('not full row rank')
+        # find optimal gains
         K, S, E = control.lqr(A, B, self.Q, self.R)
         L, S, E = control.lqr(A.T, C.T, self.Vd, self.Vn)
         L = L.T
         S = S.T
+        # gain for ref, find with closed loop
         K_r = 20.02498439
+        # build states
         Ace = np.bmat([[A-B@K, B@K],
                        [np.zeros(np.shape(A)), A-L@C]])
         Bce = np.bmat([[B*K_r],
@@ -27,6 +35,7 @@ class LQG(object):
         Cce = np.bmat([[C, np.zeros(np.shape(C))]])
         Dce = D
         # print(np.shape(Ace), np.shape(Bce), np.shape(Cce), np.shape(Dce))
+        # simulate system
         self.ss_ce = control.ss(Ace, Bce, Cce, Dce)
         # x0 = np.array([[1], [-1], [2], [-2]])
         x0 = np.zeros((4,1))
