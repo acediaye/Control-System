@@ -46,7 +46,7 @@ class FSOB(object):
         print(f'L: {L}')
         return self.time_out, self.x_hat
     
-    def graph(self, save):
+    def graph(self, save: bool):
         if self.time_out is None:
             raise RuntimeError('run excite')
         plt.figure()

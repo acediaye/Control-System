@@ -46,7 +46,7 @@ class LQG(object):
         # print(K_r)
         return self.time_out, self.y_out, self.x_out
         
-    def graph(self, save):
+    def graph(self, save: bool):
         if self.time_out is None:
             raise RuntimeError('run excite')
         plt.figure()

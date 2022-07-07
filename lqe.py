@@ -50,7 +50,7 @@ class LQE(object):
         self.time_out, self.x_hat = control.forced_response(self.ss_obsv, time, u_ob)
         return self.time_out, self.x_hat
     
-    def graph(self, save):
+    def graph(self, save: bool):
         if self.time_out is None:
             raise RuntimeError('run excite')
         plt.figure()
@@ -107,8 +107,8 @@ class LQE(object):
         self.ss_obsv = control.ss(A_ob, B_ob, C_ob, D_ob)
         # build u augmented with disturbance and noise
         u = np.array([reference])
-        u_dist = np.random.randn(2, len(time))
-        u_noise = 0.1*np.random.randn(1, len(time))
+        u_dist = np.sqrt(self.Vd)@np.random.randn(2, len(time))
+        u_noise = np.sqrt(self.Vn)@np.random.randn(1, len(time))
         u_aug = np.bmat([[u],
                          [u_dist],
                          [u_noise]])

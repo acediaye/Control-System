@@ -14,8 +14,8 @@ switch = {'open loop': False,
           'fsfb': False,
           'lqr': False,
           'fsob': False,
-          'lqe': False,
-          'lqg': True}
+          'lqe': True,
+          'lqg': False}
 # save plots
 save = False
 
@@ -95,9 +95,9 @@ if __name__ == '__main__':
 
     if switch['lqg']:
         Vd = np.array([[0.1, 0], [0, 0.1]]) 
-        Vn = 1
+        Vn = np.array([[1]])
         Q = np.array([[1, 0], [0, 1]]) 
-        R = 1
+        R = np.array([[1]])
         mylqg = lqg.LQG(Q, R, Vd, Vn)
         mylqg.excite(ss_plant, TIME, REFERENCE)
         mylqg.graph(save)
