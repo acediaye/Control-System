@@ -730,6 +730,7 @@ y =\
 
 The new states now includes position, velocity, the difference between actual and estimated position, and the difference between actual and estimated velocity.
 
+With mass = 10, $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, $Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$ \
 ![image](plots4/lqg_response.png)\
 Can see the position (x1) follows the output (y) at desired reference of 1. The velocity (x2) starts high due to moving mass and ends up at 0 when the position is at desired location. The position and velocity errors are at 0 due to the observer deriving the actual states as the plant model and observer model are the same (no disturbance or nosie).
 
@@ -794,6 +795,7 @@ y = \
 \begin{bmatrix}r \\\ d \\\ n\end{bmatrix}
 \end{aligned}$$
 
+With mass = 10, $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, $Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$ \
 ![image](plots4/lqg_response_dn.png)\
 Can see the position signal y with model disturbance and sensor noise. Only this signal is being used by the observer. The observer has the measurements of reference, y (noisy), and ideal model dynamics. It is able to filter out the noise and also derive all states; shown in estimated x1 (position) and x2 (velocity). Estimated state x3 and x4 are the error between true states and estimated states which should be close to 0. Once the full state estimates is derived from the observer, they are given to the full state feedback for converging to the reference value.
 
