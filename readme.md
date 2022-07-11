@@ -728,10 +728,74 @@ y =\
 \begin{bmatrix}r\end{bmatrix}
 \end{aligned}$$
 
-The new states now includes position, velocity, the difference between actual and estimated position, and difference between actual and estimated velocity.
+The new states now includes position, velocity, the difference between actual and estimated position, and the difference between actual and estimated velocity.
 
 ![image](plots4/lqg_response.png)\
 Can see the position (x1) follows the output (y) at desired reference of 1. The velocity (x2) starts high due to moving mass and ends up at 0 when the position is at desired location. The position and velocity errors are at 0 due to the observer deriving the actual states as the plant model and observer model are the same (no disturbance or nosie).
+
+Modeling with disturbance and noise\
+The state space equations
+
+$$\dot{x} = Ax + Bu + W$$
+
+$$y = Cx + V$$
+
+control law u with reference tracking
+
+$$u = -k\hat{x} + K_r r$$
+
+observer equation
+
+$$\dot{\hat{x}} = A\hat{x} + Bu + L(y - \hat{y})$$
+
+identity substitution $\hat{x} = x - (x - \hat{x})$
+
+Disturbance and noise being modeled as $W = V_d * d$ and $V = V_n * n$
+
+error e is defined as $e = x - \hat{x}$
+
+Becomes
+
+$$\dot{x} = Ax - BK\hat{x} + BK_r r + W$$
+
+$$\dot{x} = Ax - BKx + BK(x-\hat{x}) + BK_r r + W$$
+
+$$\dot{x} = (A-BK)x + BKe + BK_r r + V_d*d$$
+
+augmented with e
+
+$$\dot{x} = \dot{x} - \dot{\hat{x}}$$
+
+$$\dot{x} = Ax + Bu + W - A\hat{x} - Bu -Ly + L\hat{y}$$
+
+$$\dot{x} = A(x-\hat{x}) + W - LCx - LV + LC\hat{x}$$
+
+$$\dot{x} = A(x-\hat{x}) - LC(x-\hat{x}) + W - LV$$
+
+$$\dot{x} = (A-LC)e + V_d*d - L(V_n*n)$$
+
+In state space matrix form
+
+$$\begin{aligned}
+\begin{bmatrix}\dot{x} \\\ \dot{e}\end{bmatrix} = \
+\begin{bmatrix}A-BK & BK \\\ 0 & A-LC\end{bmatrix}
+\begin{bmatrix}x \\\ e\end{bmatrix} + \
+\begin{bmatrix}BK_r & V_d & 0 \\\ 0 & V_d & -LV_n\end{bmatrix}
+\begin{bmatrix}r \\\ d \\\ n\end{bmatrix}
+\end{aligned}$$
+
+matrix y
+
+$$\begin{aligned}
+y = \
+\begin{bmatrix}C & 0\end{bmatrix}
+\begin{bmatrix}x \\\ e\end{bmatrix} + \
+\begin{bmatrix}0 & 0 & V_n\end{bmatrix}
+\begin{bmatrix}r \\\ d \\\ n\end{bmatrix}
+\end{aligned}$$
+
+![image](plots4/lqg_response_dn.png)\
+Can see the position signal y with model disturbance and sensor noise. Only this signal is being used by the observer. The observer has the measurements of reference, y (noisy), and ideal model dynamics. It is able to filter out the noise and also derive all states; shown in estimated x1 (position) and x2 (velocity). Estimated state x3 and x4 are the error between true states and estimated states which should be close to 0. Once the full state estimates is derived from the observer, they are given to the full state feedback for converging to the reference value.
 
 # References
 [KaTex](https://katex.org/docs/supported.html) Markup used by github\

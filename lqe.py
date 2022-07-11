@@ -113,7 +113,7 @@ class LQE(object):
         u_aug = np.bmat([[u],
                          [u_dist],
                          [u_noise]])
-        print(np.shape(u), np.shape(u_dist), np.shape(u_noise), np.shape(u_aug))
+        # print(np.shape(u), np.shape(u_dist), np.shape(u_noise), np.shape(u_aug))
         # simulate each system
         tout, yout_dn = control.forced_response(ss_plant_dn, time, u_aug)
         tout, yout_d, xout_d = control.forced_response(ss_plant_d, time, u_aug, return_x=True)
@@ -121,20 +121,20 @@ class LQE(object):
         # print(np.shape(yout_dn))
         y = np.array(yout_dn)
         # print(np.shape(y))
-        u_ob = np.bmat([[u],  # clean input
-                        [y]])  # output with disturbance and noise
+        u_ob = np.bmat([[u],  # clean ref
+                        [y]])  # measured output with disturbance and noise
         print(np.shape(u), np.shape(y), np.shape(u_ob))
         tout, xhat = control.forced_response(self.ss_obsv, time, u_ob)
         # plotting each system
         plt.figure()
         for i in range(len(yout_dn)):
-            plt.plot(tout, yout_dn[i,:], '-', label=f'y dist+noise {i+1}')  # with dist and noise
+            plt.plot(tout, yout_dn[i, :], '-', label=f'y dist+noise {i+1}')  # with dist and noise
         for i in range(len(xout_d)):
-            plt.plot(tout, xout_d[i,:], '-', label=f'x dist {i+1}')  # with dist
+            plt.plot(tout, xout_d[i, :], '-', label=f'x dist {i+1}')  # with dist
         for i in range(len(xout)):
             plt.plot(tout, xout[i, :], '-', label=f'true x {i+1}')  # true
         for i in range(len(xhat)):
-            plt.plot(tout, xhat[i,:], '--', label=f'x est {i+1}')  # x hat
+            plt.plot(tout, xhat[i, :], '--', label=f'est x {i+1}')  # x hat
         plt.legend(loc='right')
         plt.ylabel('amplitude')
         plt.xlabel('time')

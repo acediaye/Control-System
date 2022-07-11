@@ -70,3 +70,63 @@ class LQG(object):
         print(f'poles: {poles}, zeros: {zeros}')
         plt.show()
     
+    def excite_dist_noise(self, plant: control.StateSpace, time: np.ndarray, reference: np.ndarray):
+        A, B, C, D = control.ssdata(plant)
+        # check observability
+        obsv = control.obsv(A, C)
+        rank_o = np.linalg.matrix_rank(obsv)
+        if rank_o != np.shape(A)[0]:
+            raise RuntimeError('not full row rank')
+        # find K
+        K, S, E = control.lqr(A, B, self.Q, self.R)
+        print(f'K: {K}')
+        # find L
+        L, S, E = control.lqr(A.T, C.T, self.Vd, self.Vn)
+        L = L.T
+        print(f'L: {L}')
+        # build plant with disturbance and noise system
+        K_r = 20.02498439
+        A_aug = np.bmat([[A-B@K, B@K],
+                         [np.zeros(np.shape(A)), A-L@C]])
+        B_aug = np.bmat([[B*K_r, self.Vd, np.zeros(np.shape(B))],
+                         [np.zeros(np.shape(B)), self.Vd, -L@self.Vn]])
+        C_aug = np.bmat([C, np.zeros(np.shape(C))])
+        D_aug = np.bmat([D, np.zeros(np.shape(C)), self.Vn])
+        # print(f'states:\n{A_aug}\n{B_aug}\n{C_aug}\n{D_aug}')
+        # print(np.shape(A_aug), np.shape(B_aug), np.shape(C_aug), np.shape(D_aug))
+        ss_plant_dn = control.ss(A_aug, B_aug, C_aug, D_aug)
+        # build u augmented with disturbance and noise
+        u = np.array([reference])
+        u_dist = np.sqrt(self.Vd)@np.random.normal(0, 0.1, (2, len(time)))  # gaussian: mean, std dev, size
+        u_noise = np.sqrt(self.Vn)@np.random.normal(0, 0.1, (1, len(time)))
+        u_aug = np.bmat([[u],
+                         [u_dist],
+                         [u_noise]])
+        # print(np.shape(u), np.shape(u_dist), np.shape(u_noise), np.shape(u_aug))
+        # simulate system
+        tout, yout, xout = control.forced_response(plant, time, reference, return_x=True)
+        tout, yout_dn, xout_dn = control.forced_response(ss_plant_dn, time, u_aug, return_x=True)
+        # print(np.shape(tout), np.shape(yout_dn), np.shape(xout_dn))
+        # calc K_r
+        dc = control.dcgain(ss_plant_dn)
+        K_r = np.array(1/dc)
+        print(f'K_r: {K_r}, {np.shape(K_r)}') # gains for each output, ref, 2xdist, noise
+        # plotting each system
+        plt.figure()
+        # plt.plot(tout, np.squeeze(yout), '-', label=f'true y')
+        plt.plot(tout, np.squeeze(yout_dn), '-', label=f'y dist+noise')
+        # for i in range(len(xout)):
+        #     plt.plot(tout, np.squeeze(xout[i, :]), '-', label=f'true x {i+1}')
+        for i in range(len(xout_dn)):
+            plt.plot(tout, np.squeeze(xout_dn[i, :]), '--', label=f'est x {i+1}')  # with dist and noise
+        plt.legend(loc='right')
+        plt.ylabel('amplitude')
+        plt.xlabel('time')
+        plt.title('LQG with disturbance and noise')
+        plt.grid()
+        plt.show()
+        
+        # # poles and zeros of system
+        # poles, zeros = control.pzmap(plant, plot=False)
+        # print(f'poles: {poles}, zeros: {zeros}')
+        
