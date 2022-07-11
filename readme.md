@@ -597,6 +597,24 @@ Can see the estimated states $\hat{x}$ following the actual states x open loop. 
 ![image](plots3/fsob_pzmap.png)\
 Chosen poles to be $-5 \pm 2j$
 
+With mass = 10 and initial conditions of $x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$\
+![image](plots3/fsob_response_c.png)\
+Can see with arbitrary picked initial conditions the estimated states will still converge to the true states.\
+![image](plots3/fsob_pzmap_c.png)\
+Chosen poles to be $-5 \pm 2j$
+
+With mass = 10 and initial conditions of $x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$\
+![image](plots3/fsob_response_o.png)\
+With poorly chosen poles, the estimated states becomes more oscillatory.\
+![image](plots3/fsob_pzmap_o.png)\
+Chosen poles to be $-2 \pm 5j$
+
+With mass = 10 and initial conditions of $x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$\
+![iamge](plots3/fsob_response_u.png)\
+Can see the estimated states diverge from true states due to unstable poles\
+![image](plots3/fsob_pzmap_u.png)\
+Chosen poles to be $1 \pm 2j$
+
 # Linear Quadratic Estimator (Kalman Filter)
 Kalman filter is the optimal variant of the full state observer where the gain L is calculated based off minimizing the cost function.
 

@@ -40,9 +40,9 @@ class FSOB(object):
         y = np.array([self.y_ol_out])
         u_ob = np.bmat([[u],
                        [y]])
-        # x0 = np.array([[0.5], [-0.5]])
+        x0 = np.array([[0.5], [-0.5]])  # arbitrary initial conditions
         self.ss_obsv = control.ss(A_ob, B_ob, C_ob, D_ob)
-        self.time_out, self.x_hat = control.forced_response(self.ss_obsv, time, u_ob)
+        self.time_out, self.x_hat = control.forced_response(self.ss_obsv, time, u_ob, x0)
         print(f'L: {L}')
         return self.time_out, self.x_hat
     
