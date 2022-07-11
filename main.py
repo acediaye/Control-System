@@ -84,8 +84,7 @@ if __name__ == '__main__':
     
     if switch['lqe']:
         Vd = np.array([[0.1, 0], [0, 0.1]])  # 2x2  values 0.1 or 1
-        # Wd Wn wrong? lqe command not matching lqr.T
-        # need to fix Qd=w.T*W, Qn=v.T*v, not Wd=Vd*d, Wn=Vn*n
+        # need to fix Qd=w.T*W, Qn=v.T*v, not Wd=Vd*d, Wn=Vn*n ?
         Vn = np.array([[1]])  # 1x1  # values 1
         mylqe = lqe.LQE(Vd, Vn)
         # tout, xhat = mylqe.excite(ss_plant, TIME, REFERENCE)

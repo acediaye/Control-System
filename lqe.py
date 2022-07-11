@@ -94,6 +94,8 @@ class LQE(object):
         # build plant with disturbance system
         ss_plant_d = control.ss(A, B_aug, C, np.zeros(np.shape(D_aug))) # 0 of matrix size D_aug
         # find L gain
+        # L, P, E = control.lqe(A, np.eye(len(A)), C, self.Vd, self.Vn)
+        # print(f'L: {L}')
         L, S, E = control.lqr(A.T, C.T, self.Vd, self.Vn)
         L = L.T
         S = S.T
@@ -102,13 +104,12 @@ class LQE(object):
         A_ob = A-L@C
         B_ob = np.bmat([B, L])
         C_ob = np.eye(len(A))
-        D_ob = np.array([[0, 0],
-                         [0, 0]])
+        D_ob = np.zeros((np.shape(C_ob)[0], np.shape(B_ob)[1]))
         self.ss_obsv = control.ss(A_ob, B_ob, C_ob, D_ob)
         # build u augmented with disturbance and noise
         u = np.array([reference])
-        u_dist = np.sqrt(self.Vd)@np.random.randn(2, len(time))
-        u_noise = np.sqrt(self.Vn)@np.random.randn(1, len(time))
+        u_dist = np.sqrt(self.Vd)@np.random.normal(0, 0.1, (2, len(time)))  # gaussian: mean, std dev, size
+        u_noise = np.sqrt(self.Vn)@np.random.normal(0, 0.1, (1, len(time)))
         u_aug = np.bmat([[u],
                          [u_dist],
                          [u_noise]])
@@ -117,6 +118,7 @@ class LQE(object):
         tout, yout_dn = control.forced_response(ss_plant_dn, time, u_aug)
         tout, yout_d, xout_d = control.forced_response(ss_plant_d, time, u_aug, return_x=True)
         tout, yout, xout = control.forced_response(plant, time, reference, return_x=True)
+        # print(np.shape(yout_dn))
         y = np.array(yout_dn)
         # print(np.shape(y))
         u_ob = np.bmat([[u],  # clean input
