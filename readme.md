@@ -489,9 +489,10 @@ $$A^TS + SA - SBR^{-1}B^TS + Q = 0$$
 
 Can adjust the behavior of the system by changing the weights for each individual states or inputs instead of arbitrary placing the location of the poles. This is a much more intuitive way to adjust the behavior of the system.
 
-With mass at 10\
+With mass at 10
 
-$$ Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$$ 
+$$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$$ 
+
 $$R = 1$$
 
 ![image](plots2/lqr_response.png)\
