@@ -427,9 +427,9 @@ $BK_r$ becomes the new B input vector of the close loop with gain system. Where 
 From the model A, B, C, D; the new system becomes $A_{cl}$, $B_{cl}$, C, D or $A-BK$, $BK_r$, C, D
 
 When the chosen poles are $-5 \pm 2j$ \
-![image](plots2/fsfb_response_s.png)\
+![image](plots_fsfb/fsfb_response_s.png)\
 Can see that the final position output converges to 1\
-![image](plots2/fsfb_pzmap_s.png)\
+![image](plotsfsfb/fsfb_pzmap_s.png)\
 Can see that since the poles are further left the response converges to 0 fast and since the poles are close to the real axis the response does not oscillate.
 
 When the chosen poles are $-2 \pm 5j$\
