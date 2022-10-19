@@ -496,26 +496,35 @@ $$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$$
 $$R = 1$$
 
 ![image](plots2/lqr_response.png)\
-y_kr and x1 signal is position, x2 is velocity. Can see position converges to 1. Control signal u fluctuates around 20.\
+$y_{kr}$ and x1 signal is position, x2 is velocity. Can see position converges to 1. Control signal u fluctuates around 20.\
 ![image](plots2/lqr_pzmap.png)\
 K = [0.02498439 0.07470535], $K_r = 20$\
 Poles at $-0.5 \pm 1.3j$
 
-$Q = \begin{bmatrix}1000 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$\
+$$Q = \begin{bmatrix}1000 & 0 \\\ 0 & 1\end{bmatrix}$$
+
+$$R = 1$$
+
 ![image](plots2/lqr_response_q11.png)\
 Having high weight on $Q_{11}$ tells the system to not have a lot of changes to position.\
 ![image](plots2/lqr_pzmap_q11.png)\
 K = [17.41657387 11.19744035], $K_r = 37.4$\
 Poles at $-1.06 \pm 1.6j$
 
-$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1000\end{bmatrix}$, $R = 1$\
+$$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1000\end{bmatrix}$$
+
+$$R = 1$$
+
 ![image](plots2/lqr_response_q22.png)\
 Having high weight on $Q_{22}$ tells the system to not have a lot of changes in velocity. Can see velocity peaks around 0.5, half of the previous example.\
 ![image](plots2/lqr_pzmap_q22.png)\
 K = [0.02498439 23.17378013], $K_r = 20$\
 Poles at -0.8, -2.5
 
-$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 0.001$\
+$$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$$
+
+$$R = 0.001$$
+
 ![image](plots2/lqr_response_r1.png)\
 Having low weight on $R_{1}$ tells the system it is allowed to have high values to actuator signal u.\
 ![image](plots2/lqr_pzmap_r1.png)\
@@ -601,19 +610,28 @@ Can see the estimated states $\hat{x}$ following the actual states x open loop. 
 ![image](plots3/fsob_pzmap.png)\
 Chosen poles to be $-5 \pm 2j$
 
-With mass = 10 and initial conditions of $x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$\
+With mass = 10 and initial conditions of 
+
+$$x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$$
+
 ![image](plots3/fsob_response_c.png)\
 Can see with arbitrary picked initial conditions the estimated states will still converge to the true states.\
 ![image](plots3/fsob_pzmap_c.png)\
 Chosen poles to be $-5 \pm 2j$
 
-With mass = 10 and initial conditions of $x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$\
+With mass = 10 and initial conditions of 
+
+$$x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$$
+
 ![image](plots3/fsob_response_o.png)\
 With poorly chosen poles, the estimated states becomes more oscillatory.\
 ![image](plots3/fsob_pzmap_o.png)\
 Chosen poles to be $-2 \pm 5j$
 
-With mass = 10 and initial conditions of $x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$\
+With mass = 10 and initial conditions of 
+
+$$x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$$
+
 ![iamge](plots3/fsob_response_u.png)\
 Can see the estimated states diverge from true states due to unstable poles\
 ![image](plots3/fsob_pzmap_u.png)\
