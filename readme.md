@@ -428,7 +428,7 @@ From the model A, B, C, D; the new system becomes $A_{cl}$, $B_{cl}$, C, D or $A
 
 When the chosen poles are $-5 \pm 2j$\
 ![image](plots2/fsfb_response_s.png)\
-Can see that the final position output converges to 1
+Can see that the final position output converges to 1\
 ![iamge](plots2/fsfb_pzmap_s.png)\
 Can see that since the poles are further left the response converges to 0 fast and since the poles are close to the real axis the response does not oscillate.
 
