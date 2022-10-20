@@ -427,7 +427,7 @@ $BK_r$ becomes the new B input vector of the close loop with gain system. Where 
 From the model A, B, C, D; the new system becomes $A_{cl}$, $B_{cl}$, C, D or $A-BK$, $BK_r$, C, D
 
 When the chosen poles are $-5 \pm 2j$ \
-![image](plots2/fsfb_response_s.png)\
+![image](<plots2/fsfb_response_s.png>)\
 Can see that the final position output converges to 1\
 ![image](plots2/fsfb_pzmap_s.png)\
 Can see that since the poles are further left the response converges to 0 fast and since the poles are close to the real axis the response does not oscillate.
@@ -652,8 +652,14 @@ Where
 
 Q(Vd) and R(Vn) values are weights/uncertainty covariances that penalize the use of the respective disturbance and noise. Values has to be $Q \ge 0$ and $R > 0$. Having high values in Q tells the system that it has high amounts of disturbance (therefore the system should value the measurement signal more) and low values in Q means that it has low disturbance (therefore the system should value the model signal more). High values in R tells the system it has high amount of noise vs low values means that it has low amounts of noise. The cost function J has a unique minimum that can be obtained by solving the Algebraic Riccati Equation. Optimal estimator gain L is $L = PC^TV^{-1}$ where P is $AP + PA^T - PC^TV^{-1}CP + W = 0$
 
-Gain L can be calculated with the Algebraic Riccati Equation. When using a model with no disturbance and noise, the kalman filter has no problem following the actual states.\
-With $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, mass = 10\
+Gain L can be calculated with the Algebraic Riccati Equation. When using a model with no disturbance and noise, the kalman filter has no problem following the actual states.
+
+With mass = 10
+
+$$V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$$
+
+$$V_n = 1$$
+
 ![image](plots3/lqe_response.png)\
 ![image](plots3/lqe_pzmap.png)\
 The gain is optimal at L = [[ 0.09488826], [-0.04549811]]
@@ -676,15 +682,30 @@ $$y = Cx + Du + 0*d + V_n n$$
 
 $$y = Cx + \begin{bmatrix}D & 0 & V_n\end{bmatrix} \begin{bmatrix}u \\\ d \\\ n\end{bmatrix}$$
 
-With $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, mass = 10\
+With mass = 10
+
+$$V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$$
+
+$$V_n = 1$$
+
 ![image](plots3/lqe_response_dn.png)\
 Can see that the estimated states (x est) are closely following the actual states (true x) even though the state observer is fed with a signal with both disturbance and noise (y dist+noise). Signal with only disturbance is (x dist).
 
-With $V_d = \begin{bmatrix}1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, mass = 10\
+With mass = 10
+
+$$V_d = \begin{bmatrix}1 & 0 \\\ 0 & 0.1\end{bmatrix}$$
+
+$$V_n = 1$$
+
 ![image](plots3/lqe_response_vd11.png)\
 When $V_{d11} = 1$ the position signal is being weighted more to the measurement side so the noise becomes more prominant. The estimated state strays further from the true state and closer to the disturbance state.
 
-With $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 1\end{bmatrix}$, $V_n = 1$, mass = 10\
+With mass = 10
+
+$$V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 1\end{bmatrix}$$
+
+$$V_n = 1$$
+
 ![image](plots3/lqe_response_vd22.png)\
 When $V_{d22} = 1$ the velocity signal is being weighted more to the measurement side so the noise becomes more prominant. The estimated state strays further from the true state and closer to the disturbance state.
 
@@ -752,7 +773,16 @@ y =\
 
 The new states now includes position, velocity, the difference between actual and estimated position, and the difference between actual and estimated velocity.
 
-With mass = 10, $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, $Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$ \
+With mass = 10
+
+$$V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$$
+
+$$V_n = 1$$
+
+$$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$$
+
+$$R = 1$$
+
 ![image](plots4/lqg_response.png)\
 Can see the position (x1) follows the output (y) at desired reference of 1. The velocity (x2) starts high due to moving mass and ends up at 0 when the position is at desired location. The position and velocity errors are at 0 due to the observer deriving the actual states as the plant model and observer model are the same (no disturbance or nosie).
 
@@ -817,7 +847,16 @@ y = \
 \begin{bmatrix}r \\\ d \\\ n\end{bmatrix}
 \end{aligned}$$
 
-With mass = 10, $V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$, $V_n = 1$, $Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$, $R = 1$ \
+With mass = 10
+
+$$V_d = \begin{bmatrix}0.1 & 0 \\\ 0 & 0.1\end{bmatrix}$$
+
+$$V_n = 1$$
+
+$$Q = \begin{bmatrix}1 & 0 \\\ 0 & 1\end{bmatrix}$$
+
+$$R = 1$$
+
 ![image](plots4/lqg_response_dn.png)\
 Can see the position signal y with model disturbance and sensor noise. Only this signal is being used by the observer. The observer has the measurements of reference, y (noisy), and ideal model dynamics. It is able to filter out the noise and also derive all states; shown in estimated x1 (position) and x2 (velocity). Estimated state x3 and x4 are the error between true states and estimated states which should be close to 0. Once the full state estimates is derived from the observer, they are given to the full state feedback for converging to the reference value.
 
