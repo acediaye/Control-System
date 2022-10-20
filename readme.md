@@ -554,7 +554,15 @@ $$
 \begin{bmatrix}u \\\ y\end{bmatrix}
 $$
 
-$A-LC$ becomes the new A matrix, $\begin{bmatrix}B & L\end{bmatrix}$ becomes the new B matrix, while $\begin{bmatrix}u \\\ y\end{bmatrix}$ becomes the new u matrix. C can be identity due to knowing all the state estimations and D becomes a matrix of 0s. The system A has given fixed eigvenvalues, and now with A-LC can shift the eigenvalues to any user chosen poles.
+$A-LC$ becomes the new A matrix, 
+
+$$\begin{bmatrix}B & L\end{bmatrix}$$
+
+becomes the new B matrix, while 
+
+$$\begin{bmatrix}u \\\ y\end{bmatrix}$$
+
+becomes the new u matrix. C can be identity due to knowing all the state estimations and D becomes a matrix of 0s. The system A has given fixed eigvenvalues, and now with A-LC can shift the eigenvalues to any user chosen poles.
 
 To find the eigenvalues of the plant.
 
@@ -632,12 +640,12 @@ With mass = 10 and initial conditions of
 
 $$x_0 = \begin{bmatrix}0.5 \\\ -0.5\end{bmatrix}$$
 
-![iamge](plots3/fsob_response_u.png)\
+![image](plots3/fsob_response_u.png)\
 Can see the estimated states diverge from true states due to unstable poles\
 ![image](plots3/fsob_pzmap_u.png)\
 Chosen poles to be $1 \pm 2j$
 
-# Linear Quadratic Estimator (Kalman Filter)
+# Linear Quadratic Estimator
 Kalman filter is the optimal variant of the full state observer where the gain L is calculated based off minimizing the cost function.
 
 The cost function
@@ -670,7 +678,13 @@ $$\dot{x} = Ax + Bu + W$$
 
 $$y = Cx + V$$
 
-where W is the process noise, $W = Vd*d$ and V is the measurement noise, $V = Vn*n$
+where W is the process noise, 
+
+$$W = Vd*d$$ 
+
+and V is the measurement noise, 
+
+$$V = Vn*n$$
 
 $$\dot{x} = Ax + Bu + V_d d + 0n$$
 
