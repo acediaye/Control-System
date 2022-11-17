@@ -26,8 +26,8 @@ print(f'sizes: A:{np.shape(A)} B:{np.shape(B)}, C:{np.shape(C)}, D:{np.shape(D)}
 mode = 'obfb'
 if __name__ == '__main__':
     # open loop response
-    x0 = np.array([[1],
-                   [-1]])
+    x0 = np.array([[0],
+                   [0]])
     tout, yout = control.forced_response(sys, time, ref, x0)
     youtnoise = yout+np.random.normal(0, 0.1, np.shape(time))  # mu, sigma, shape
     if mode == 'ol':
@@ -35,7 +35,7 @@ if __name__ == '__main__':
         p, z = control.pzmap(sys, plot=False)
         print(f'ol poles: {p}')
         # plotting
-        plt.plot(tout, youtnoise, label='yout_noise')
+        # plt.plot(tout, youtnoise, label='yout_noise')
         plt.plot(tout, yout, label='yout')
         plt.title('open loop response')
         plt.legend()
@@ -67,7 +67,8 @@ if __name__ == '__main__':
         p, z = control.pzmap(sys_fb, plot=False)
         print(f'fb poles: {p}')
         # plotting
-        plt.plot(tout, yout_fb, label='yout_fb')
+        plt.plot(tout, ref, label='ref')
+        plt.plot(tout, yout_fb, '--', label='yout_fb')
         plt.title('full state feedback')
         plt.legend()
         
@@ -79,7 +80,7 @@ if __name__ == '__main__':
         rank_o = np.linalg.matrix_rank(obsv)
         print(f'obsb rank: {rank_o}')
         # choosing and placing poles
-        poles_o = [-6+2j, -6-2j]
+        poles_o = [-4+2j, -4-2j]
         L = control.place(A.T, C.T, poles_o).T
         print(f'L: {L}')
         # full state observer
@@ -143,7 +144,7 @@ if __name__ == '__main__':
         p, z = control.pzmap(sys_ce, plot=False)
         print(f'ce poles: {p}')
         # plotting
-        plt.plot(tout, yout_ce, label='yout_ce')
+        plt.plot(tout, ref, label='ref')
         for i in range(np.shape(xout_ce)[0]):
             plt.plot(tout, xout_ce[i,:], '--', label=f'xhat{i+1}')
         plt.legend()
