@@ -112,7 +112,7 @@ if __name__ == '__main__':
         rank_o = np.linalg.matrix_rank(obsv)
         print(f'obsv rank: {rank_o}')
         # choosing and placing poles
-        poles_c = [-5+2j, -5-2j]
+        poles_c = [-1+2j, -1-2j]
         K = control.place(A, B, poles_c)
         print(f'K: {K}')
         # choosing and placing poles
@@ -143,8 +143,24 @@ if __name__ == '__main__':
         # check poles
         p, z = control.pzmap(sys_ce, plot=False)
         print(f'ce poles: {p}')
+        
+        # full state feedback
+        A_fb = A-B@K
+        # find reference gain
+        sys_fb = control.ss(A_fb, B, C, D)
+        dc = control.dcgain(sys_fb)
+        K_r = np.array([[1/dc]])
+        print(f'ref gain: {K_r}')
+        B_fb = B@K_r
+        sys_fb = control.ss(A_fb, B_fb, C, D)
+        print(f'sizes: A_fb:{np.shape(A_fb)} B_fb:{np.shape(B_fb)}, C:{np.shape(C)}, D:{np.shape(D)}')
+        x0 = np.array([[0],
+                       [0]])
+        tout, yout_fb = control.forced_response(sys_fb, time, ref, x0)
+        
         # plotting
         plt.plot(tout, ref, label='ref')
+        plt.plot(tout, yout_fb, label='yout_fb')
         for i in range(np.shape(xout_ce)[0]):
             plt.plot(tout, xout_ce[i,:], '--', label=f'xhat{i+1}')
         plt.legend()
