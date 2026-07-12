@@ -37,7 +37,16 @@ $$ \dot x(t) = Ax(t) - BKx(t) + BK_rr $$
 
 $$ \dot x(t) = (A - BK)x(t) + BK_rr $$
 
-$A-BK$ becomes the new A system matrix of the close loop system. $BK_r$ becomes the new B system matrix. Since the eigenvalues of the old A matrix is fixed by the model, the new A matrix means the user can move the eigenvalues to desired places by changing the K gain matrix. The eigvalues of new A can be placed anywhere if A, B are controllable.
+$$ [A-B*K] $$
+becomes the new A system matrix of the close loop system. 
+
+$$ [B*K_r] $$
+becomes the new B system matrix.
+
+Since the eigenvalues of the old A matrix is fixed by the model, the new A matrix means the user can move the eigenvalues to desired places by changing the K gain matrix. The eigvalues of new A can be placed anywhere if A, B are controllable.
+
+$$ rank(ctrb(A, B)) = 2 $$
+therefore the system in controllable.
 
 To find the eigenvalues of a system by its characteristic equation.
 
@@ -83,7 +92,7 @@ $$ K = \begin{bmatrix} K_{1} & K_{2} \end{bmatrix} = \begin{bmatrix} 9 & 0 \end{
 
 The control law $u(t) = -Kx(t)$ forces the closed loop poles to the desired locations, so the user can pick the response of the system.
 
-$BK_r$ becomes the new B input vector of the close loop with gain system. Example with mass = 1. Where $K_r$ is the inverse of the dc gain of $A_{cl}$ The DC gain of $A_{cl}$ is 0.0345 so $K_r$ is 29
+$K_rB$ becomes the new B input vector of the close loop with gain system. Example with mass = 1. Where $K_r$ is the inverse of the dc gain of $A_{cl}$ The DC gain of $A_{cl}$ is 0.0345 so $K_r$ is 29
 
 From the model A, B, C, D; the new system becomes $A_{cl}$, $B_{cl}$, C, D or $A-BK$, $BK_r$, C, D
 
@@ -140,6 +149,9 @@ $$ \begin{bmatrix} u \\\ y \end{bmatrix} $$
 becomes the new u matrix. 
 
 C can be identity due to knowing all the state estimations and D becomes a matrix of 0s. The system A has given fixed eigvenvalues, and now with A-LC can shift the eigenvalues to any user chosen poles.
+
+$$ rank(obsv(A, C)) = 2 $$
+therefore the system is observable.
 
 To find the eigenvalues of the plant.
 
@@ -296,3 +308,17 @@ $$
 $$
 
 The new states now includes position, velocity, the difference between actual and estimated position, and the difference between actual and estimated velocity.
+
+$$ rank(ctrb(A, B)) = 2 $$
+
+$$ rank(obsv(A, C)) = 2 $$
+
+The system is both controllable and observable.
+
+With m = 10
+![image](plots4/lqg_response.png)\
+Feedback poles at $ -1 \pm 2i $ and Observer poles at $ -4 \pm 2i $
+
+With m = 10, sigma = 0.1 and mean = 0 noise added into output y of state model.
+![image](plots4/lqg_response_dn.png)\
+Feedback poles at $ -1 \pm 2i $ and Observer poles at $ -4 \pm 2i $

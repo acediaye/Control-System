@@ -116,7 +116,7 @@ Model with process noise(disturbance) and measurement noise
 
 $$ \dot{x} = Ax + Bu + W $$
 
-$$ y = Cx + V $$
+$$ y = Cx + Du + V $$
 
 where W is the process noise, 
 
@@ -181,11 +181,11 @@ $$ R = 1 $$
 Can see the position (x1) follows the output (y) at desired reference of 1. The velocity (x2) starts high due to moving mass and ends up at 0 when the position is at desired location. The position and velocity errors are at 0 due to the observer deriving the actual states as the plant model and observer model are the same (no disturbance or nosie).
 
 Modeling with disturbance and noise\
-The state space equations
+The model state space equations
 
 $$ \dot{x} = Ax + Bu + W $$
 
-$$ y = Cx + V $$
+$$ y = Cx + Du + V $$
 
 control law u with reference tracking
 
@@ -201,7 +201,7 @@ Disturbance and noise being modeled as $W = V_d * d$ and $V = V_n * n$
 
 error e is defined as $e = x - \hat{x}$
 
-Becomes
+Substituting u into model equations becomes
 
 $$ \dot{x} = Ax - BK\hat{x} + BK_r r + W $$
 
@@ -209,19 +209,23 @@ $$ \dot{x} = Ax - BKx + BK(x-\hat{x}) + BK_r r + W $$
 
 $$ \dot{x} = (A-BK)x + BKe + BK_r r + V_d*d $$
 
-augmented with e
+---
 
-$$ \dot{x} = \dot{x} - \dot{\hat{x}} $$
+Substituting model and observer equations into $\dot{e}$
 
-$$ \dot{x} = Ax + Bu + W - A\hat{x} - Bu -Ly + L\hat{y} $$
+$$ \dot{e} = \dot{x} - \dot{\hat{x}} $$
 
-$$ \dot{x} = A(x-\hat{x}) + W - LCx - LV + LC\hat{x} $$
+$$ \dot{e} = Ax + Bu + W - A\hat{x} - Bu -Ly + L\hat{y} $$
 
-$$ \dot{x} = A(x-\hat{x}) - LC(x-\hat{x}) + W - LV $$
+$$ \dot{e} = A(x-\hat{x}) + W - LCx - LV + LC\hat{x} $$
 
-$$ \dot{x} = (A-LC)e + V_d*d - L(V_n*n) $$
+$$ \dot{e} = A(x-\hat{x}) - LC(x-\hat{x}) + W - LV $$
 
-In state space matrix form
+$$ \dot{e} = (A-LC)e + V_d*d - L(V_n*n) $$
+
+---
+
+The combined state space matrix form
 
 $$
 \begin{aligned}
@@ -233,13 +237,11 @@ $$
 \end{aligned}
 $$
 
-matrix y
-
 $$
 \begin{aligned} y =
 \begin{bmatrix} C & 0 \end{bmatrix}
 \begin{bmatrix} x \\\ e \end{bmatrix} +
-\begin{bmatrix} 0 & 0 & V_n \end{bmatrix}
+\begin{bmatrix} D & 0 & V_n \end{bmatrix}
 \begin{bmatrix} r \\\ d \\\ n \end{bmatrix}
 \end{aligned}
 $$
