@@ -180,7 +180,7 @@ $$ R = 1 $$
 ![image](plots4/lqg_response.png)\
 Can see the position (x1) follows the output (y) at desired reference of 1. The velocity (x2) starts high due to moving mass and ends up at 0 when the position is at desired location. The position and velocity errors are at 0 due to the observer deriving the actual states as the plant model and observer model are the same (no disturbance or nosie).
 
-Modeling with disturbance and noise
+Modeling with disturbance and noise N($\mu, \sigma^2$)
 - w ~ N(0, Vd)
 - v ~ N(0, Vn)
 
